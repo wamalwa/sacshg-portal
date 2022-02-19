@@ -5,6 +5,7 @@
       :snackbar="snackbar"
       :actionColor="actionColor"
       :actionMessage="actionMessage"
+      :role="authUser.type"
     />
     <v-main class="ma-4">
       <h2>Dashboard</h2>
@@ -66,7 +67,6 @@
             </v-list-item>
           </v-card>
         </v-col>
-
       </v-row>
 
       <h5>Coming Up</h5>
@@ -74,7 +74,11 @@
         <v-col cols="12">
           <v-card outlined hover tile>
             <v-card-text class="d-flex flex-wrap pa-0">
-              <v-col sm="3" md="2" class="cyan lighten-5 cyan--text text-center d-flex">
+              <v-col
+                sm="3"
+                md="2"
+                class="cyan lighten-5 cyan--text text-center d-flex"
+              >
                 <div class="align-self-center" style="width: 100%">
                   <h2 class="pa-2">
                     {{
@@ -114,10 +118,19 @@
                 </v-row>
                 <v-row class="mt-5">
                   <v-col>
-                    <v-btn dark color="cyan" class="ml-2 mt-5" outlined rounded small link to="events">
-                    <v-icon left>mdi-open-in-new</v-icon>
-                    View All
-                  </v-btn>
+                    <v-btn
+                      dark
+                      color="cyan"
+                      class="ml-2 mt-5"
+                      outlined
+                      rounded
+                      small
+                      link
+                      to="events"
+                    >
+                      <v-icon left>mdi-open-in-new</v-icon>
+                      View All
+                    </v-btn>
                   </v-col>
                 </v-row>
               </v-col>
@@ -145,7 +158,14 @@
                 ></v-card-subtitle>
 
                 <v-card-actions>
-                  <v-btn class="ml-2 mt-5" outlined rounded small link to="news">
+                  <v-btn
+                    class="ml-2 mt-5"
+                    outlined
+                    rounded
+                    small
+                    link
+                    to="news"
+                  >
                     <v-icon left>mdi-open-in-new</v-icon>
                     View All
                   </v-btn>
@@ -154,13 +174,12 @@
 
               <v-avatar class="ma-3" size="125" tile>
                 <v-img
-                  src="https://sacn.univa.co.ke/api/v2/files/bg1.jpg"
+                  src="https://api.staugustineshg.org/api/v2/files/bg1.jpg"
                 ></v-img>
               </v-avatar>
             </div>
           </v-card>
         </v-col>
-
       </v-row>
     </v-main>
   </v-app>
@@ -177,13 +196,25 @@ export default {
 
   data: () => ({
     authUser: {
-      name: ''
+      name: "",
     },
     actionColor: "black",
     actionMessage: "",
     snackbar: false,
-    months: [ "JAN", "FEB", "MAR", "APR", "MAY", "JUN", 
-           "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" ],
+    months: [
+      "JAN",
+      "FEB",
+      "MAR",
+      "APR",
+      "MAY",
+      "JUN",
+      "JUL",
+      "AUG",
+      "SEP",
+      "OCT",
+      "NOV",
+      "DEC",
+    ],
     latestevent: {
       id: 2,
       event_date: "2021-04-20T21:00:00.000Z",
@@ -192,8 +223,7 @@ export default {
       venue: "St. Augustine Parish Center",
       description:
         "This is an annual event that brings together all members to decide on key operations of the association.",
-      main_image_url:
-        "https://sacn.univa.co.ke/api/v2/files/full_logo.png",
+      main_image_url: "https://api.staugustineshg.org/api/v2/files/full_logo.png",
     },
   }),
 
@@ -217,13 +247,29 @@ export default {
   },
 
   mounted() {
-    if(JSON.parse(localStorage.getItem("user"))) {
-      this.authUser = JSON.parse(localStorage.getItem("user"));
-    } else {
-      this.$router.replace({
-        name: "login",
+    this.$store
+      .dispatch("user/GET_STATE")
+      .then(() => {
+        if (JSON.parse(localStorage.getItem("user"))) {
+          this.authUser = JSON.parse(localStorage.getItem("user"));
+        } else {
+          this.$router.replace({
+            name: "login",
+          });
+        }
+      })
+      .catch((err) => {
+        this.actionMessage = err.message + "! Please refresh this page to retry.";
+        this.actionColor = "red";
+        this.snackbar = true;
+        this.loading = false;
+
+        setTimeout(() => {
+          this.actionMessage = "";
+          this.actionColor = "black";
+          this.snackbar = false;
+        }, 4000);
       });
-    }
   },
 };
 </script>

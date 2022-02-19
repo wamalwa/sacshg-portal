@@ -5,6 +5,7 @@
       :snackbar="snackbar"
       :actionColor="actionColor"
       :actionMessage="actionMessage"
+      :role="authUser.type"
     />
     <v-main class="ma-4">
       <div class="events">
@@ -63,7 +64,7 @@
               dense
               dark
               color="cyan"
-              src="https://sacn.univa.co.ke/api/v2/files/bg2.png"
+              src="https://api.staugustineshg.org/api/v2/files/bg2.png"
             >
               <v-btn
                 icon
@@ -200,7 +201,7 @@
                       :src="
                         newevent.main_image_url != ''
                           ? newevent.main_image_url
-                          : 'https://sacn.univa.co.ke/api/v2/files/placeholder.png'
+                          : 'https://api.staugustineshg.org/api/v2/files/placeholder.png'
                       "
                     ></v-img>
                   </v-col>
@@ -377,7 +378,7 @@ export default {
       main_image_url: "",
     },
     authUser: {
-      name: ''
+      name: "",
     },
   }),
 
@@ -442,6 +443,7 @@ export default {
     editEvent(index) {
       this.editIndex = index;
       this.newevent = this.events[index];
+      this.newevent.event_date = this.newevent.event_date.split("T")[0];
       this.dialog = true;
     },
     clearForm() {
@@ -464,102 +466,102 @@ export default {
           index: this.editIndex,
           data: this.newevent,
         })
-        .then(() => {
-          this.actionMessage =
-            "You have successfully updated the event " + this.newevent.name;
-          this.actionColor = "success";
-          this.snackbar = true;
-          this.newevent = {
-            id: null,
-            event_date: "",
-            event_time: "",
-            name: "",
-            venue: "",
-            description: "",
-            main_image_url: "",
-          };
-          this.saving = false;
-          this.dialog = false;
+          .then(() => {
+            this.actionMessage =
+              "You have successfully updated the event " + this.newevent.name;
+            this.actionColor = "success";
+            this.snackbar = true;
+            this.newevent = {
+              id: null,
+              event_date: "",
+              event_time: "",
+              name: "",
+              venue: "",
+              description: "",
+              main_image_url: "",
+            };
+            this.saving = false;
+            this.dialog = false;
 
-          setTimeout(() => {
-            this.actionMessage = "";
-            this.actionColor = "black";
-            this.snackbar = false;
-          }, 4000);
-        })
-        .catch((err) => {
-          console.log(err);
-          this.actionMessage =
-            "An error occured when updating event " + this.newevent.name;
-          this.actionColor = "red";
-          this.snackbar = true;
-          this.newevent = {
-            id: null,
-            event_date: "",
-            event_time: "",
-            name: "",
-            venue: "",
-            description: "",
-            main_image_url: "",
-          };
-          this.saving = false;
-          this.dialog = false;
+            setTimeout(() => {
+              this.actionMessage = "";
+              this.actionColor = "black";
+              this.snackbar = false;
+            }, 4000);
+          })
+          .catch((err) => {
+            console.log(err);
+            this.actionMessage =
+              "An error occured when updating event " + this.newevent.name;
+            this.actionColor = "red";
+            this.snackbar = true;
+            this.newevent = {
+              id: null,
+              event_date: "",
+              event_time: "",
+              name: "",
+              venue: "",
+              description: "",
+              main_image_url: "",
+            };
+            this.saving = false;
+            this.dialog = false;
 
-          setTimeout(() => {
-            this.actionMessage = "";
-            this.actionColor = "black";
-            this.snackbar = false;
-          }, 4000);
-        });
+            setTimeout(() => {
+              this.actionMessage = "";
+              this.actionColor = "black";
+              this.snackbar = false;
+            }, 4000);
+          });
       } else {
         this.addEvent(this.newevent)
-        .then(() => {
-          this.actionMessage =
-            "You have successfully added the event " + this.newevent.name;
-          this.actionColor = "success";
-          this.snackbar = true;
-          this.newevent = {
-            id: null,
-            event_date: "",
-            event_time: "",
-            name: "",
-            venue: "",
-            description: "",
-            main_image_url: "",
-          };
-          this.saving = false;
-          this.dialog = false;
+          .then(() => {
+            this.actionMessage =
+              "You have successfully added the event " + this.newevent.name;
+            this.actionColor = "success";
+            this.snackbar = true;
+            this.newevent = {
+              id: null,
+              event_date: "",
+              event_time: "",
+              name: "",
+              venue: "",
+              description: "",
+              main_image_url: "",
+            };
+            this.saving = false;
+            this.dialog = false;
 
-          setTimeout(() => {
-            this.actionMessage = "";
-            this.actionColor = "black";
-            this.snackbar = false;
-          }, 4000);
-        })
-        .catch((err) => {
-          console.log(err);
-          this.actionMessage =
-            "An error occured when adding event " + this.newevent.name;
-          this.actionColor = "red";
-          this.snackbar = true;
-          this.newevent = {
-            id: null,
-            event_date: "",
-            event_time: "",
-            name: "",
-            venue: "",
-            description: "",
-            main_image_url: "",
-          };
-          this.saving = false;
-          this.dialog = false;
+            setTimeout(() => {
+              this.actionMessage = "";
+              this.actionColor = "black";
+              this.snackbar = false;
+            }, 4000);
+          })
+          .catch((err) => {
+            console.log(err);
+            this.actionMessage =
+              "An error occured when adding event " + this.newevent.name;
+            this.actionColor = "red";
+            this.snackbar = true;
+            this.newevent = {
+              id: null,
+              event_date: "",
+              event_time: "",
+              name: "",
+              venue: "",
+              description: "",
+              main_image_url: "",
+            };
+            this.saving = false;
+            this.dialog = false;
 
-          setTimeout(() => {
-            this.actionMessage = "";
-            this.actionColor = "black";
-            this.snackbar = false;
-          }, 4000);
-        });
+            setTimeout(() => {
+              this.actionMessage = "";
+              this.actionColor = "black";
+              this.snackbar = false;
+            }, 4000);
+          });
       }
     },
     amOrPm(tm) {
@@ -581,17 +583,33 @@ export default {
   },
 
   mounted() {
-    this.$store.dispatch("event/GET_EVENTS").then(() => {
-      this.loading = false;
-    });
-    
-    if(JSON.parse(localStorage.getItem("user"))) {
-      this.authUser = JSON.parse(localStorage.getItem("user"));
-    } else {
-      this.$router.replace({
-        name: "login",
+    this.$store
+      .dispatch("user/GET_STATE")
+      .then(() => {
+        this.$store.dispatch("event/GET_EVENTS").then(() => {
+          this.loading = false;
+        });
+
+        if (JSON.parse(localStorage.getItem("user"))) {
+          this.authUser = JSON.parse(localStorage.getItem("user"));
+        } else {
+          this.$router.replace({
+            name: "login",
+          });
+        }
+      })
+      .catch((err) => {
+        this.actionMessage = err.message + "! Please refresh this page to retry.";
+        this.actionColor = "red";
+        this.snackbar = true;
+        this.loading = false;
+
+        setTimeout(() => {
+          this.actionMessage = "";
+          this.actionColor = "black";
+          this.snackbar = false;
+        }, 4000);
       });
-    }
   },
 };
 </script>

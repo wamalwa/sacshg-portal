@@ -5,6 +5,7 @@
       :snackbar="snackbar"
       :actionColor="actionColor"
       :actionMessage="actionMessage"
+      :role="authUser.type"
     />
     <v-main class="ma-4">
       <div class="events">
@@ -23,7 +24,7 @@
               dense
               dark
               color="cyan"
-              src="https://sacn.univa.co.ke/api/v2/files/bg2.png"
+              src="https://api.staugustineshg.org/api/v2/files/bg2.png"
             >
               <v-btn
                 icon
@@ -55,7 +56,7 @@
                       :src="
                         newcarousel.image_url != ''
                           ? newcarousel.image_url
-                          : 'https://sacn.univa.co.ke/api/v2/files/placeholder.png'
+                          : 'https://api.staugustineshg.org/api/v2/files/placeholder.png'
                       "
                     ></v-img>
                   </v-col>
@@ -63,6 +64,15 @@
                     <v-text-field
                       v-model="newcarousel.image_caption"
                       label="Image Caption*"
+                      outlined
+                      dense
+                      required
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12">
+                    <v-text-field
+                      v-model="newcarousel.tag_line"
+                      label="Tag Line*"
                       outlined
                       dense
                       required
@@ -141,7 +151,7 @@
               dense
               dark
               color="cyan"
-              src="https://sacn.univa.co.ke/api/v2/files/bg2.png"
+              src="https://api.staugustineshg.org/api/v2/files/bg2.png"
             >
               <v-btn icon dark @click="faqDialog = false">
                 <v-icon>mdi-close</v-icon>
@@ -204,7 +214,7 @@
               dense
               dark
               color="cyan"
-              src="https://sacn.univa.co.ke/api/v2/files/bg2.png"
+              src="https://api.staugustineshg.org/api/v2/files/bg2.png"
             >
               <v-btn icon dark @click="servicesDialog = false">
                 <v-icon>mdi-close</v-icon>
@@ -285,7 +295,7 @@
               dense
               dark
               color="cyan"
-              src="https://sacn.univa.co.ke/api/v2/files/bg2.png"
+              src="https://api.staugustineshg.org/api/v2/files/bg2.png"
             >
               <v-btn icon dark @click="testimonialsDialog = false">
                 <v-icon>mdi-close</v-icon>
@@ -329,7 +339,7 @@
                         :src="
                           newtestimonial.avatar != ''
                             ? newtestimonial.avatar
-                            : 'https://sacn.univa.co.ke/api/v2/files/placeholder.png'
+                            : 'https://api.staugustineshg.org/api/v2/files/placeholder.png'
                         "
                       ></v-img>
                     </v-avatar>
@@ -468,6 +478,7 @@
                         <v-card outlined hover>
                           <v-card-text>
                             <h3>{{ carousel.image_caption }}</h3>
+                            <i>{{ carousel.tag_line }}</i>
                           </v-card-text>
                           <v-card-actions>
                             <v-btn
@@ -1226,6 +1237,7 @@ export default {
       id: null,
       image_url: "",
       image_caption: "",
+      tag_line: "",
       cta_btn_text: "",
       cta_btn_icon: "",
       cta_btn_url: "",
@@ -1249,7 +1261,7 @@ export default {
       message: "",
     },
     authUser: {
-      name: ''
+      name: "",
     },
   }),
 
@@ -1489,6 +1501,7 @@ export default {
         id: null,
         image_url: "",
         image_caption: "",
+        tag_line: "",
         cta_btn_text: "",
         cta_btn_icon: "",
         cta_btn_url: "",
@@ -1633,6 +1646,7 @@ export default {
               id: null,
               image_url: "",
               image_caption: "",
+              tag_line: "",
               cta_btn_text: "",
               cta_btn_icon: "",
               cta_btn_url: "",
@@ -1655,6 +1669,7 @@ export default {
               id: null,
               image_url: "",
               image_caption: "",
+              tag_line: "",
               cta_btn_text: "",
               cta_btn_icon: "",
               cta_btn_url: "",
@@ -1678,6 +1693,7 @@ export default {
               id: null,
               image_url: "",
               image_caption: "",
+              tag_line: "",
               cta_btn_text: "",
               cta_btn_icon: "",
               cta_btn_url: "",
@@ -1700,6 +1716,7 @@ export default {
               id: null,
               image_url: "",
               image_caption: "",
+              tag_line: "",
               cta_btn_text: "",
               cta_btn_icon: "",
               cta_btn_url: "",
@@ -1718,87 +1735,87 @@ export default {
     saveFaq() {
       this.saving = true;
 
-      if (this.editFaqIndex > -1) { 
+      if (this.editFaqIndex > -1) {
         this.updateFaq({
           index: this.editFaqIndex,
           data: this.newfaq,
         })
-        .then(() => {
-          this.actionMessage = "FAQ Updated successfully!";
-          this.actionColor = "success";
-          this.snackbar = true;
-          this.newfaq = {
-            id: null,
-            question: "",
-            answer: "",
-          };
-          this.saving = false;
-          this.faqDialog = false;
+          .then(() => {
+            this.actionMessage = "FAQ Updated successfully!";
+            this.actionColor = "success";
+            this.snackbar = true;
+            this.newfaq = {
+              id: null,
+              question: "",
+              answer: "",
+            };
+            this.saving = false;
+            this.faqDialog = false;
 
-          setTimeout(() => {
-            this.actionMessage = "";
-            this.actionColor = "black";
-            this.snackbar = false;
-          }, 4000);
-        })
-        .catch((err) => {
-          console.log(err);
-          this.actionMessage = "An error occured when updating FAQ";
-          this.actionColor = "red";
-          this.snackbar = true;
-          this.newfaq = {
-            id: null,
-            question: "",
-            answer: "",
-          };
-          this.saving = false;
-          this.faqDialog = false;
+            setTimeout(() => {
+              this.actionMessage = "";
+              this.actionColor = "black";
+              this.snackbar = false;
+            }, 4000);
+          })
+          .catch((err) => {
+            console.log(err);
+            this.actionMessage = "An error occured when updating FAQ";
+            this.actionColor = "red";
+            this.snackbar = true;
+            this.newfaq = {
+              id: null,
+              question: "",
+              answer: "",
+            };
+            this.saving = false;
+            this.faqDialog = false;
 
-          setTimeout(() => {
-            this.actionMessage = "";
-            this.actionColor = "black";
-            this.snackbar = false;
-          }, 4000);
-        });
+            setTimeout(() => {
+              this.actionMessage = "";
+              this.actionColor = "black";
+              this.snackbar = false;
+            }, 4000);
+          });
       } else {
         this.addFaq(this.newfaq)
-        .then(() => {
-          this.actionMessage = "FAQ Added successfully!";
-          this.actionColor = "success";
-          this.snackbar = true;
-          this.newfaq = {
-            id: null,
-            question: "",
-            answer: "",
-          };
-          this.saving = false;
-          this.faqDialog = false;
+          .then(() => {
+            this.actionMessage = "FAQ Added successfully!";
+            this.actionColor = "success";
+            this.snackbar = true;
+            this.newfaq = {
+              id: null,
+              question: "",
+              answer: "",
+            };
+            this.saving = false;
+            this.faqDialog = false;
 
-          setTimeout(() => {
-            this.actionMessage = "";
-            this.actionColor = "black";
-            this.snackbar = false;
-          }, 4000);
-        })
-        .catch((err) => {
-          console.log(err);
-          this.actionMessage = "An error occured when adding FAQ";
-          this.actionColor = "red";
-          this.snackbar = true;
-          this.newfaq = {
-            id: null,
-            question: "",
-            answer: "",
-          };
-          this.saving = false;
-          this.faqDialog = false;
+            setTimeout(() => {
+              this.actionMessage = "";
+              this.actionColor = "black";
+              this.snackbar = false;
+            }, 4000);
+          })
+          .catch((err) => {
+            console.log(err);
+            this.actionMessage = "An error occured when adding FAQ";
+            this.actionColor = "red";
+            this.snackbar = true;
+            this.newfaq = {
+              id: null,
+              question: "",
+              answer: "",
+            };
+            this.saving = false;
+            this.faqDialog = false;
 
-          setTimeout(() => {
-            this.actionMessage = "";
-            this.actionColor = "black";
-            this.snackbar = false;
-          }, 4000);
-        });
+            setTimeout(() => {
+              this.actionMessage = "";
+              this.actionColor = "black";
+              this.snackbar = false;
+            }, 4000);
+          });
       }
     },
     saveService() {
@@ -1899,90 +1916,90 @@ export default {
           index: this.editTestimonialIndex,
           data: this.newtestimonial,
         })
-        .then(() => {
-          this.actionMessage = "Testimonial updated successfully!";
-          this.actionColor = "success";
-          this.snackbar = true;
-          this.newtestimonial = {
-            id: null,
-            avatar: "",
-            name: "",
-            designation: "",
-            message: "",
-          };
-          this.saving = false;
-          this.testimonialsDialog = false;
+          .then(() => {
+            this.actionMessage = "Testimonial updated successfully!";
+            this.actionColor = "success";
+            this.snackbar = true;
+            this.newtestimonial = {
+              id: null,
+              avatar: "",
+              name: "",
+              designation: "",
+              message: "",
+            };
+            this.saving = false;
+            this.testimonialsDialog = false;
 
-          setTimeout(() => {
-            this.actionMessage = "";
-            this.actionColor = "black";
-            this.snackbar = false;
-          }, 4000);
-        })
-        .catch((err) => {
-          console.log(err);
-          this.actionMessage = "An error occured when adding testimonial";
-          this.actionColor = "red";
-          this.snackbar = true;
-          this.newtestimonial = {
-            id: null,
-            avatar: "",
-            name: "",
-            designation: "",
-            message: "",
-          };
-          this.saving = false;
-          this.testimonialsDialog = false;
+            setTimeout(() => {
+              this.actionMessage = "";
+              this.actionColor = "black";
+              this.snackbar = false;
+            }, 4000);
+          })
+          .catch((err) => {
+            console.log(err);
+            this.actionMessage = "An error occured when adding testimonial";
+            this.actionColor = "red";
+            this.snackbar = true;
+            this.newtestimonial = {
+              id: null,
+              avatar: "",
+              name: "",
+              designation: "",
+              message: "",
+            };
+            this.saving = false;
+            this.testimonialsDialog = false;
 
-          setTimeout(() => {
-            this.actionMessage = "";
-            this.actionColor = "black";
-            this.snackbar = false;
-          }, 4000);
-        });
-       } else {
+            setTimeout(() => {
+              this.actionMessage = "";
+              this.actionColor = "black";
+              this.snackbar = false;
+            }, 4000);
+          });
+      } else {
         this.addTestimonial(this.newtestimonial)
-        .then(() => {
-          this.actionMessage = "Testimonial Added successfully!";
-          this.actionColor = "success";
-          this.snackbar = true;
-          this.newtestimonial = {
-            id: null,
-            avatar: "",
-            name: "",
-            designation: "",
-            message: "",
-          };
-          this.saving = false;
-          this.testimonialsDialog = false;
+          .then(() => {
+            this.actionMessage = "Testimonial Added successfully!";
+            this.actionColor = "success";
+            this.snackbar = true;
+            this.newtestimonial = {
+              id: null,
+              avatar: "",
+              name: "",
+              designation: "",
+              message: "",
+            };
+            this.saving = false;
+            this.testimonialsDialog = false;
 
-          setTimeout(() => {
-            this.actionMessage = "";
-            this.actionColor = "black";
-            this.snackbar = false;
-          }, 4000);
-        })
-        .catch((err) => {
-          console.log(err);
-          this.actionMessage = "An error occured when adding testimonial";
-          this.actionColor = "red";
-          this.snackbar = true;
-          this.newtestimonial = {
-            id: null,
-            avatar: "",
-            name: "",
-            designation: "",
-            message: "",
-          };
-          this.saving = false;
-          this.testimonialsDialog = false;
+            setTimeout(() => {
+              this.actionMessage = "";
+              this.actionColor = "black";
+              this.snackbar = false;
+            }, 4000);
+          })
+          .catch((err) => {
+            console.log(err);
+            this.actionMessage = "An error occured when adding testimonial";
+            this.actionColor = "red";
+            this.snackbar = true;
+            this.newtestimonial = {
+              id: null,
+              avatar: "",
+              name: "",
+              designation: "",
+              message: "",
+            };
+            this.saving = false;
+            this.testimonialsDialog = false;
 
-          setTimeout(() => {
-            this.actionMessage = "";
-            this.actionColor = "black";
-            this.snackbar = false;
-          }, 4000);
-        });
+            setTimeout(() => {
+              this.actionMessage = "";
+              this.actionColor = "black";
+              this.snackbar = false;
+            }, 4000);
+          });
       }
     },
     amOrPm(tm) {
@@ -2004,25 +2021,41 @@ export default {
   },
 
   mounted() {
-    this.$store.dispatch("landing/GET_CAROUSELS").then(() => {
-      this.loading = false;
-    });
+    this.$store
+      .dispatch("user/GET_STATE")
+      .then(() => {
+        this.$store.dispatch("landing/GET_CAROUSELS").then(() => {
+          this.loading = false;
+        });
 
-    this.$store.dispatch("landing/GET_FAQS");
+        this.$store.dispatch("landing/GET_FAQS");
 
-    this.$store.dispatch("landing/GET_WEBSITE");
+        this.$store.dispatch("landing/GET_WEBSITE");
 
-    this.$store.dispatch("landing/GET_SERVICES");
+        this.$store.dispatch("landing/GET_SERVICES");
 
-    this.$store.dispatch("landing/GET_TESTIMONIALS");
+        this.$store.dispatch("landing/GET_TESTIMONIALS");
 
-    if(JSON.parse(localStorage.getItem("user"))) {
-      this.authUser = JSON.parse(localStorage.getItem("user"));
-    } else {
-      this.$router.replace({
-        name: "login",
+        if (JSON.parse(localStorage.getItem("user"))) {
+          this.authUser = JSON.parse(localStorage.getItem("user"));
+        } else {
+          this.$router.replace({
+            name: "login",
+          });
+        }
+      })
+      .catch((err) => {
+        this.actionMessage = err.message + "! Please refresh this page to retry.";
+        this.actionColor = "red";
+        this.snackbar = true;
+        this.loading = false;
+
+        setTimeout(() => {
+          this.actionMessage = "";
+          this.actionColor = "black";
+          this.snackbar = false;
+        }, 4000);
       });
-    }
   },
 };
 </script>

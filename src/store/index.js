@@ -7,6 +7,7 @@ import event from './event'
 import upload from './upload'
 import address from './address'
 import member from './member'
+import loan from './loan'
 import landing from './landing'
 import csi from './csi'
 
@@ -37,6 +38,7 @@ export default new Vuex.Store({
         upload,
         address,
         member,
+        loan,
         landing,
         csi
     }

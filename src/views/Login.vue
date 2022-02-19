@@ -15,10 +15,10 @@
                 color="primary"
                 dark
                 flat
-                src="https://sacn.univa.co.ke/api/v2/files/bg2.png"
+                src="https://api.staugustineshg.org/api/v2/files/bg2.png"
               >
                 <v-img
-                  src="https://sacn.univa.co.ke/api/v2/files/logo.png"
+                  src="https://api.staugustineshg.org/api/v2/files/logo.png"
                   style="max-width: 72px"
                   class="mr-3"
                 ></v-img>
@@ -30,7 +30,7 @@
                       <v-icon>mdi-home</v-icon>
                     </v-btn>
                   </template>
-                  <span>KCM Home</span>
+                  <span>Portal Home</span>
                 </v-tooltip>
               </v-toolbar>
               <v-card-text>
@@ -60,9 +60,12 @@
                   @click:append="showPassword = !showPassword"
                 />
                 <v-row class="">
-                  <v-spacer></v-spacer>
-                  <v-col md="4"
-                    offset-md="4">
+                  <v-col md="8">
+                    <v-btn class="blue--text" text to="/reset-password"
+                      >Forgot Password?
+                    </v-btn>
+                  </v-col>
+                  <v-col md="4">
                     <v-btn
                       color="primary"
                       type="submit"
@@ -75,16 +78,6 @@
                   </v-col>
                 </v-row>
               </v-card-text>
-              <v-card-actions v-show="false">
-                <v-spacer></v-spacer>
-                <v-btn class="primary--text" text to="/register"
-                  >Register
-                </v-btn>
-                |
-                <v-btn class="warning--text" text to="/reset-password"
-                  >Forgot Password?
-                </v-btn>
-              </v-card-actions>
             </v-card>
           </v-form>
         </v-col>

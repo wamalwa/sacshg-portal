@@ -5,6 +5,7 @@
       :snackbar="snackbar"
       :actionColor="actionColor"
       :actionMessage="actionMessage"
+      :role="authUser.type"
     />
     <v-main class="ma-4">
       <div class="events">
@@ -334,7 +335,7 @@ export default {
     actionMessage: "",
     snackbar: false,
     authUser: {
-      name: ''
+      name: "",
     },
   }),
 
@@ -346,6 +347,10 @@ export default {
   },
 
   methods: {
+    editItem(item) {
+      this.$router.push("member/" + item.id);
+    },
+
     ...mapActions({
       addEvent: "event/SAVE_EVENT",
     }),
@@ -420,17 +425,33 @@ export default {
   },
 
   mounted() {
-    this.$store.dispatch("member/GET_MEMBERS").then(() => {
-      this.loading = false;
-    });
+    this.$store
+      .dispatch("user/GET_STATE")
+      .then(() => {
+        this.$store.dispatch("member/GET_MEMBERS").then(() => {
+          this.loading = false;
+        });
 
-    if(JSON.parse(localStorage.getItem("user"))) {
-      this.authUser = JSON.parse(localStorage.getItem("user"));
-    } else {
-      this.$router.replace({
-        name: "login",
+        if (JSON.parse(localStorage.getItem("user"))) {
+          this.authUser = JSON.parse(localStorage.getItem("user"));
+        } else {
+          this.$router.replace({
+            name: "login",
+          });
+        }
+      })
+      .catch((err) => {
+        this.actionMessage = err.message + "! Please refresh this page to retry.";
+        this.actionColor = "red";
+        this.snackbar = true;
+        this.loading = false;
+
+        setTimeout(() => {
+          this.actionMessage = "";
+          this.actionColor = "black";
+          this.snackbar = false;
+        }, 4000);
       });
-    }
   },
 };
 </script>

@@ -3,28 +3,39 @@ import axios from 'axios'
 export default {
     namespaced: true,
     state: {
-        users: null,
+        users: [],
+        state: null,
         auth_user: {
             refreshToken: localStorage.getItem('refreshToken') || '',
             accessToken: localStorage.getItem('accessToken') || ''
         },
+        reset_token: null,
     },
 
     getters: {
         USERS: state => {
             return state.users;
         },
+        STATE: state => {
+            return state.state;
+        },
         AUTH_USER: state => {
             return state.auth_user;
         },
         AUTHENTICATED: state => {
             return state.auth_user !== null
+        },
+        RESET_TOKEN: state => {
+            return state.reset_token;
         }
     },
 
     mutations: {
         SET_USERS: (state, payload) => {
             state.users = payload
+        },
+        SET_STATE: (state, payload) => {
+            state.state = payload
         },
         ADD_USER: (state, payload) => {
             state.users.push(payload)
@@ -43,6 +54,9 @@ export default {
                     accessToken: payload
                 }
             }
+        },
+        SET_RESET_TOKEN: (state, payload) => {
+            state.reset_token = payload
         }
     },
 
@@ -60,14 +74,22 @@ export default {
             let { data } = await axios.get('users')
             context.commit('SET_USERS', data)
         },
+        GET_STATE: async (context) => {
+            let { data } = await axios.get('users/state')
+            context.commit('SET_STATE', data)
+        },
         SAVE_USER: async (context, payload) => {
             let { data } = await axios.post('users', payload)
             context.commit('ADD_USER', data)
         },
+        SEND_LINK: async(context, payload) => {
+            let { data } = await axios.post('users/request-reset', payload)
+            return data.message
+        },
         LOGIN: ({ commit }, payload) => {
             return new Promise((resolve, reject) => {
                 axios
-                    .post(`https://auth.univa.co.ke/auth/v1/login`, payload)
+                    .post(`https://auth.staugustineshg.org/auth/v1/login`, payload)
                     .then(({ data, status }) => {
                         if (status === 200) {
                             commit('SET_AUTH_USER', data);
@@ -82,7 +104,7 @@ export default {
         REFRESH_TOKEN: ({ commit }, payload) => {
             return new Promise((resolve, reject) => {
                 axios
-                    .post(`https://auth.univa.co.ke/auth/v1/token`, payload)
+                    .post(`https://auth.staugustineshg.org/auth/v1/token`, payload)
                     .then(response => {
                         if (status === 200) {
                             commit('SET_REFRESH_TOKEN', response.accessToken)
@@ -95,10 +117,18 @@ export default {
             });
         },
         LOGOUT: ({ commit }, payload) => {
-            return axios.delete(`https://auth.univa.co.ke/auth/v1/logout`, payload).then(() => {
+            return axios.delete(`https://auth.staugustineshg.org/auth/v1/logout`, payload).then(() => {
                 commit('SET_AUTH_USER', null)
             })
-        }
+        },
+        GET_RESET_TOKEN: async (context, payload) => {
+            let {data} = await axios.post(`validate-token`, payload)
+            context.commit('SET_RESET_TOKEN', data)
+        },
+        CONFIRM_RESET_PASSWORD: async (context, payload) => {
+            let {data} = await axios.put(`confirm-reset/${payload.jsaUser.user_id}`, payload)
+            context.commit('SET_RESET_TOKEN', data)
+        },
     },
 
     modules: {

@@ -5,6 +5,7 @@
       :snackbar="snackbar"
       :actionColor="actionColor"
       :actionMessage="actionMessage"
+      :role="authUser.type"
     />
     <v-main class="ma-4">
       <div class="users">
@@ -63,7 +64,7 @@
               dense
               dark
               color="cyan"
-              src="https://sacn.univa.co.ke/api/v2/files/bg2.png"
+              src="https://api.staugustineshg.org/api/v2/files/bg2.png"
             >
               <v-btn
                 icon
@@ -144,7 +145,7 @@
                       :src="
                         newnews.image_url != ''
                           ? newnews.image_url
-                          : 'https://sacn.univa.co.ke/api/v2/files/placeholder.png'
+                          : 'https://api.staugustineshg.org/api/v2/files/placeholder.png'
                       "
                     ></v-img>
                   </v-col>
@@ -320,7 +321,7 @@ export default {
       body: "",
     },
     authUser: {
-      name: ''
+      name: "",
     },
   }),
 
@@ -353,37 +354,35 @@ export default {
         index: this.deleteIndex,
         data: { id: this.news[this.deleteIndex].id },
       })
-      .then(() => {
-            this.actionMessage =
-              "News Item delete successfully";
-            this.actionColor = "success";
-            this.snackbar = true;
-            this.deleteIndex = -1;
-            this.deleting = false;
-            this.deleteDialog = false;
+        .then(() => {
+          this.actionMessage = "News Item delete successfully";
+          this.actionColor = "success";
+          this.snackbar = true;
+          this.deleteIndex = -1;
+          this.deleting = false;
+          this.deleteDialog = false;
 
-            setTimeout(() => {
-              this.actionMessage = "";
-              this.actionColor = "black";
-              this.snackbar = false;
-            }, 4000);
-          })
-          .catch((err) => {
-            console.log(err);
-            this.actionMessage =
-              "An error occured when deleting.";
-            this.actionColor = "red";
-            this.snackbar = true;
-            this.deleteIndex = -1;
-            this.deleting = false;
-            this.deleteDialog = false;
+          setTimeout(() => {
+            this.actionMessage = "";
+            this.actionColor = "black";
+            this.snackbar = false;
+          }, 4000);
+        })
+        .catch((err) => {
+          console.log(err);
+          this.actionMessage = "An error occured when deleting.";
+          this.actionColor = "red";
+          this.snackbar = true;
+          this.deleteIndex = -1;
+          this.deleting = false;
+          this.deleteDialog = false;
 
-            setTimeout(() => {
-              this.actionMessage = "";
-              this.actionColor = "black";
-              this.snackbar = false;
-            }, 4000);
-          });
+          setTimeout(() => {
+            this.actionMessage = "";
+            this.actionColor = "black";
+            this.snackbar = false;
+          }, 4000);
+        });
     },
     editNews(index) {
       this.editIndex = index;
@@ -438,8 +437,7 @@ export default {
           .catch((err) => {
             console.log(err);
             this.actionMessage =
-              "An error occured when updating " +
-              this.newnews.name;
+              "An error occured when updating " + this.newnews.name;
             this.actionColor = "red";
             this.snackbar = true;
             this.newnews = {
@@ -521,19 +519,35 @@ export default {
   },
 
   mounted() {
-    this.$store.dispatch("news/GET_NEWS").then(() => {
-      this.loading = false;
-    });
+    this.$store
+      .dispatch("user/GET_STATE")
+      .then(() => {
+        this.$store.dispatch("news/GET_NEWS").then(() => {
+          this.loading = false;
+        });
 
-    this.$store.dispatch("category/GET_CATEGORIES");
+        this.$store.dispatch("category/GET_CATEGORIES");
 
-    if(JSON.parse(localStorage.getItem("user"))) {
-      this.authUser = JSON.parse(localStorage.getItem("user"));
-    } else {
-      this.$router.replace({
-        name: "login",
+        if (JSON.parse(localStorage.getItem("user"))) {
+          this.authUser = JSON.parse(localStorage.getItem("user"));
+        } else {
+          this.$router.replace({
+            name: "login",
+          });
+        }
+      })
+      .catch((err) => {
+        this.actionMessage = err.message + "! Please refresh this page to retry.";
+        this.actionColor = "red";
+        this.snackbar = true;
+        this.loading = false;
+
+        setTimeout(() => {
+          this.actionMessage = "";
+          this.actionColor = "black";
+          this.snackbar = false;
+        }, 4000);
       });
-    }
   },
 };
 </script>

@@ -5,6 +5,7 @@
       :snackbar="snackbar"
       :actionColor="actionColor"
       :actionMessage="actionMessage"
+      :role="authUser.type"
     />
     <v-main class="ma-4">
       <div class="csi">
@@ -63,7 +64,7 @@
               dense
               dark
               color="cyan"
-              src="https://sacn.univa.co.ke/api/v2/files/bg2.png"
+              src="https://api.staugustineshg.org/api/v2/files/bg2.png"
             >
               <v-btn
                 icon
@@ -114,9 +115,16 @@
                       :src="
                         newcsi.main_image_url != ''
                           ? newcsi.main_image_url
-                          : 'https://sacn.univa.co.ke/api/v2/files/placeholder.png'
+                          : 'https://api.staugustineshg.org/api/v2/files/placeholder.png'
                       "
                     ></v-img>
+                  </v-col>
+                  <v-col>
+                    <ckeditor
+                      :editor="editor"
+                      :config="editorConfig"
+                      v-model="newcsi.story"
+                    ></ckeditor>
                   </v-col>
                 </v-row>
               </v-container>
@@ -174,7 +182,7 @@
               <v-col sm="12" md="8">
                 <h3>{{ csi.title }}</h3>
                 <p>{{ csi.description }}</p>
-                
+
                 <v-row class="mt-5">
                   <v-col>
                     <v-btn
@@ -217,6 +225,7 @@
 <script>
 import Navbar from "@/components/Navbar";
 import { mapGetters, mapActions } from "vuex";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 export default {
   name: "CSI",
@@ -225,6 +234,41 @@ export default {
   },
 
   data: () => ({
+    editor: ClassicEditor,
+    editorConfig: {
+      toolbar: [
+        "heading",
+        "|",
+        "bold",
+        "italic",
+        "link",
+        "bulletedList",
+        "numberedList",
+        "blockQuote",
+      ],
+      heading: {
+        options: [
+          {
+            model: "paragraph",
+            title: "Paragraph",
+            class: "ck-heading_paragraph",
+          },
+          {
+            model: "heading1",
+            view: "h1",
+            title: "Heading 1",
+            class: "ck-heading_heading1",
+          },
+          {
+            model: "heading2",
+            view: "h2",
+            title: "Heading 2",
+            class: "ck-heading_heading2",
+          },
+        ],
+      },
+    },
+    editorData: "",
     saving: false,
     disabled: false,
     loading: true,
@@ -257,9 +301,10 @@ export default {
       title: "",
       description: "",
       main_image_url: "",
+      story: "",
     },
     authUser: {
-      name: ''
+      name: "",
     },
   }),
 
@@ -333,6 +378,7 @@ export default {
         title: "",
         description: "",
         main_image_url: "",
+        story: "",
       };
     },
     saveCsi() {
@@ -343,90 +389,94 @@ export default {
           index: this.editIndex,
           data: this.newcsi,
         })
-        .then(() => {
-          this.actionMessage =
-            "You have successfully updated the csi " + this.newcsi.title;
-          this.actionColor = "success";
-          this.snackbar = true;
-          this.newcsi = {
-            id: null,
-            title: "",
-            description: "",
-            main_image_url: "",
-          };
-          this.saving = false;
-          this.dialog = false;
+          .then(() => {
+            this.actionMessage =
+              "You have successfully updated the csi " + this.newcsi.title;
+            this.actionColor = "success";
+            this.snackbar = true;
+            this.newcsi = {
+              id: null,
+              title: "",
+              description: "",
+              main_image_url: "",
+              story: "",
+            };
+            this.saving = false;
+            this.dialog = false;
 
-          setTimeout(() => {
-            this.actionMessage = "";
-            this.actionColor = "black";
-            this.snackbar = false;
-          }, 4000);
-        })
-        .catch((err) => {
-          console.log(err);
-          this.actionMessage =
-            "An error occured when updating csi " + this.newcsi.title;
-          this.actionColor = "red";
-          this.snackbar = true;
-          this.newcsi = {
-            id: null,
-            title: "",
-            description: "",
-            main_image_url: "",
-          };
-          this.saving = false;
-          this.dialog = false;
+            setTimeout(() => {
+              this.actionMessage = "";
+              this.actionColor = "black";
+              this.snackbar = false;
+            }, 4000);
+          })
+          .catch((err) => {
+            console.log(err);
+            this.actionMessage =
+              "An error occured when updating csi " + this.newcsi.title;
+            this.actionColor = "red";
+            this.snackbar = true;
+            this.newcsi = {
+              id: null,
+              title: "",
+              description: "",
+              main_image_url: "",
+              story: "",
+            };
+            this.saving = false;
+            this.dialog = false;
 
-          setTimeout(() => {
-            this.actionMessage = "";
-            this.actionColor = "black";
-            this.snackbar = false;
-          }, 4000);
-        });
+            setTimeout(() => {
+              this.actionMessage = "";
+              this.actionColor = "black";
+              this.snackbar = false;
+            }, 4000);
+          });
       } else {
         this.addCsi(this.newcsi)
-        .then(() => {
-          this.actionMessage =
-            "You have successfully added the csi " + this.newcsi.title;
-          this.actionColor = "success";
-          this.snackbar = true;
-          this.newcsi = {
-            id: null,
-            title: "",
-            description: "",
-            main_image_url: "",
-          };
-          this.saving = false;
-          this.dialog = false;
+          .then(() => {
+            this.actionMessage =
+              "You have successfully added the csi " + this.newcsi.title;
+            this.actionColor = "success";
+            this.snackbar = true;
+            this.newcsi = {
+              id: null,
+              title: "",
+              description: "",
+              main_image_url: "",
+              story: "",
+            };
+            this.saving = false;
+            this.dialog = false;
 
-          setTimeout(() => {
-            this.actionMessage = "";
-            this.actionColor = "black";
-            this.snackbar = false;
-          }, 4000);
-        })
-        .catch((err) => {
-          console.log(err);
-          this.actionMessage =
-            "An error occured when adding csi " + this.newcsi.title;
-          this.actionColor = "red";
-          this.snackbar = true;
-          this.newcsi = {
-            id: null,
-            title: "",
-            description: "",
-            main_image_url: "",
-          };
-          this.saving = false;
-          this.dialog = false;
+            setTimeout(() => {
+              this.actionMessage = "";
+              this.actionColor = "black";
+              this.snackbar = false;
+            }, 4000);
+          })
+          .catch((err) => {
+            console.log(err);
+            this.actionMessage =
+              "An error occured when adding csi " + this.newcsi.title;
+            this.actionColor = "red";
+            this.snackbar = true;
+            this.newcsi = {
+              id: null,
+              title: "",
+              description: "",
+              main_image_url: "",
+              story: "",
+            };
+            this.saving = false;
+            this.dialog = false;
 
-          setTimeout(() => {
-            this.actionMessage = "";
-            this.actionColor = "black";
-            this.snackbar = false;
-          }, 4000);
-        });
+            setTimeout(() => {
+              this.actionMessage = "";
+              this.actionColor = "black";
+              this.snackbar = false;
+            }, 4000);
+          });
       }
     },
     amOrPm(tm) {
@@ -448,17 +498,33 @@ export default {
   },
 
   mounted() {
-    this.$store.dispatch("csi/GET_CSI").then(() => {
-      this.loading = false;
-    });
-    
-    if(JSON.parse(localStorage.getItem("user"))) {
-      this.authUser = JSON.parse(localStorage.getItem("user"));
-    } else {
-      this.$router.replace({
-        name: "login",
+    this.$store
+      .dispatch("user/GET_STATE")
+      .then(() => {
+        this.$store.dispatch("csi/GET_CSI").then(() => {
+          this.loading = false;
+        });
+
+        if (JSON.parse(localStorage.getItem("user"))) {
+          this.authUser = JSON.parse(localStorage.getItem("user"));
+        } else {
+          this.$router.replace({
+            name: "login",
+          });
+        }
+      })
+      .catch((err) => {
+        this.actionMessage = err.message + "! Please refresh this page to retry.";
+        this.actionColor = "red";
+        this.snackbar = true;
+        this.loading = false;
+
+        setTimeout(() => {
+          this.actionMessage = "";
+          this.actionColor = "black";
+          this.snackbar = false;
+        }, 4000);
       });
-    }
   },
 };
 </script>

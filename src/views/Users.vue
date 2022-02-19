@@ -1,36 +1,37 @@
 <template>
   <v-app>
-    <Navbar 
-      :userfullname="authUser.name" 
-      :snackbar="snackbar"
-      :actionColor="actionColor"
-      :actionMessage="actionMessage"
-      />
+    <Navbar
+        :actionColor="actionColor"
+        :actionMessage="actionMessage"
+        :role="authUser.type"
+        :snackbar="snackbar"
+        :userfullname="authUser.name"
+    />
     <v-main class="ma-4">
       <div class="users">
         <h1 class="subheading text--gray">
           Users
-          <v-btn outlined color="primary" @click="dialog = true">
+          <v-btn color="primary" outlined @click="dialog = true">
             <v-icon left>mdi-plus</v-icon>
             Add User
           </v-btn>
         </h1>
         <v-dialog
-          v-model="dialog"
-          transition="dialog-bottom-transition"
-          scrollable
-          max-width="800px"
-          persistent
+            v-model="dialog"
+            max-width="800px"
+            persistent
+            scrollable
+            transition="dialog-bottom-transition"
         >
           <v-card tile>
             <v-toolbar
-              flat
-              dense
-              dark
-              color="cyan"
-              src="https://sacn.univa.co.ke/api/v2/files/bg2.png"
+                color="cyan"
+                dark
+                dense
+                flat
+                src="https://api.staugustineshg.org/api/v2/files/bg2.png"
             >
-              <v-btn icon dark @click="dialog = false">
+              <v-btn dark icon @click="dialog = false">
                 <v-icon>mdi-close</v-icon>
               </v-btn>
               <v-toolbar-title>Add User</v-toolbar-title>
@@ -40,49 +41,50 @@
                 <v-row class="mt-4">
                   <v-col cols="12">
                     <v-text-field
-                      v-model="newuser.name"
-                      label="Legal Full Name*"
-                      outlined
-                      dense
-                      prepend-icon="mdi-account-box"
-                      required
+                        v-model="newuser.name"
+                        dense
+                        label="Legal Full Name*"
+                        outlined
+                        prepend-icon="mdi-account-box"
+                        required
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" md="6">
-                    <v-text-field 
-                      v-model="newuser.email"
-                      label="Email*" 
-                      outlined
-                      dense
-                      prepend-icon="mdi-email"
-                      required>
+                    <v-text-field
+                        v-model="newuser.email"
+                        dense
+                        label="Email*"
+                        outlined
+                        prepend-icon="mdi-email"
+                        required
+                    >
                     </v-text-field>
                   </v-col>
                   <v-col cols="12" md="6">
-                    <v-text-field 
-                      v-model="newuser.phone"
-                      label="Phone*" 
-                      outlined
-                      dense
-                      prepend-icon="mdi-phone"
-                      required >
+                    <v-text-field
+                        v-model="newuser.phone"
+                        dense
+                        label="Phone*"
+                        outlined
+                        prepend-icon="mdi-phone"
+                        required
+                    >
                     </v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6">
                     <v-autocomplete
-                      v-model="newuser.type"
-                      :items="userTypes"
-                      item-text="name"
-                      item-value="id"
-                      required
-                      dense
-                      prepend-icon="mdi-microphone-variant"
-                      outlined
-                      hide-no-data
-                      label="User Type*"
+                        v-model="newuser.type"
+                        :items="userTypes"
+                        dense
+                        hide-no-data
+                        item-text="name"
+                        item-value="id"
+                        label="User Type*"
+                        outlined
+                        prepend-icon="mdi-microphone-variant"
+                        required
                     ></v-autocomplete>
                   </v-col>
-                  
                 </v-row>
               </v-container>
               <small>*indicates required field</small>
@@ -92,7 +94,13 @@
               <v-btn color="error darken-1" text @click="dialog = false">
                 Close
               </v-btn>
-              <v-btn color="success darken-1" :loading="saving" :disabled="disabled" text @click="saveUser">
+              <v-btn
+                  :disabled="disabled"
+                  :loading="saving"
+                  color="success darken-1"
+                  text
+                  @click="saveUser"
+              >
                 <v-icon left>mdi-content-save-edit-outline</v-icon>
                 Save
               </v-btn>
@@ -105,43 +113,43 @@
               <v-card-text>
                 Please stand by
                 <v-progress-linear
-                  indeterminate
-                  color="white"
-                  class="mb-0"
+                    class="mb-0"
+                    color="white"
+                    indeterminate
                 ></v-progress-linear>
               </v-card-text>
             </v-card>
           </v-dialog>
           <v-card
-            v-for="user in users"
-            :key="user.id"
-            outlined
-            class="pa-5 mb-3"
-            hover
+              v-for="user in users"
+              :key="user.id"
+              class="pa-5 mb-3"
+              hover
+              outlined
           >
             <v-layout row wrap>
-              <v-flex xs12 sm12 md3>
+              <v-flex md3 sm12 xs12>
                 <div class="caption grey--text">Name</div>
                 <div>{{ user.name }}</div>
               </v-flex>
-              <v-flex xs12 sm5 md3>
+              <v-flex md3 sm5 xs12>
                 <div class="caption grey--text">Email</div>
                 <div>{{ user.email }}</div>
               </v-flex>
-              <v-flex xs12 sm5 md3>
+              <v-flex md3 sm5 xs12>
                 <div class="caption grey--text">Phone</div>
                 <div>{{ user.phone }}</div>
               </v-flex>
-              <v-flex xs6 sm2 md2>
+              <v-flex md2 sm2 xs6>
                 <div class="caption grey--text">Type</div>
                 <div>{{ user.type === 1 ? "Admin" : "Other" }}</div>
               </v-flex>
-              <v-flex xs6 sm2 md1>
+              <v-flex md1 sm2 xs6>
                 <div class="caption grey--text">Actions</div>
-                <v-btn x-small fab text color="error">
+                <v-btn color="error" fab text x-small>
                   <v-icon x-small>mdi-delete</v-icon>
                 </v-btn>
-                <v-btn x-small fab text color="info">
+                <v-btn color="info" fab text x-small>
                   <v-icon x-small>mdi-pencil</v-icon>
                 </v-btn>
               </v-flex>
@@ -155,7 +163,7 @@
 
 <script>
 import Navbar from "@/components/Navbar";
-import { mapGetters, mapActions } from "vuex";
+import {mapActions, mapGetters} from "vuex";
 
 export default {
   name: "Users",
@@ -168,25 +176,26 @@ export default {
     disabled: false,
     loading: true,
     dialog: false,
-    actionColor: 'black',
-    actionMessage: '',
+    actionColor: "black",
+    actionMessage: "",
     snackbar: false,
     newuser: {
       id: null,
-      name: '',
-      email: '',
-      type: '',
-      phone: '',
-      date_created: ''
+      name: "",
+      email: "",
+      type: "",
+      phone: "",
+      date_created: "",
     },
     userTypes: [
-      { id: 1, name: 'Admin'},
-      { id: 2, name: 'Staff'},
-      { id: 3, name: 'Manager'},
-      { id: 4, name: 'Member'},
+      {id: 1, name: "Admin"},
+      {id: 2, name: "Staff"},
+      {id: 3, name: "Manager"},
+      {id: 4, name: "Member"},
     ],
     authUser: {
-      name: ''
+      name: "",
+      role: 0,
     },
   }),
 
@@ -205,44 +214,75 @@ export default {
       this.saving = true;
 
       this.addUser(this.newuser)
-        .then(() => {
-          this.actionMessage =
-            "You have successfully added " +
-            this.newuser.name +
-            " SACSHG system users!";
-          this.actionColor = "success";
-          this.snackbar = true;
-          this.newuser = {
-                    id: null,
-                    name: '',
-                    type: '',
-                    phone: ''
-                  };
-          this.saving = false;
-          this.dialog = false;
+          .then(() => {
+            this.actionMessage =
+                "You have successfully added " +
+                this.newuser.name +
+                " SACSHG system users!";
+            this.actionColor = "success";
+            this.snackbar = true;
+            this.newuser = {
+              id: null,
+              name: "",
+              type: "",
+              phone: "",
+            };
+            this.saving = false;
+            this.dialog = false;
 
-          setTimeout(() => {
-            this.actionMessage = "";
-            this.actionColor = "black";
-            this.snackbar = false;
-          }, 4000);
+            setTimeout(() => {
+              this.actionMessage = "";
+              this.actionColor = "black";
+              this.snackbar = false;
+            }, 4000);
+          })
+          .catch((err) => {
+            console.log(err);
+            this.actionMessage =
+                "An error occured when adding " +
+                this.newuser.name +
+                " to SACSHG users.";
+            this.actionColor = "red";
+            this.snackbar = true;
+            this.newuser = {
+              id: null,
+              name: "",
+              type: "",
+              phone: "",
+            };
+            this.saving = false;
+            this.dialog = false;
+
+            setTimeout(() => {
+              this.actionMessage = "";
+              this.actionColor = "black";
+              this.snackbar = false;
+            }, 4000);
+          });
+    },
+  },
+
+  mounted() {
+    this.$store
+        .dispatch("user/GET_STATE")
+        .then(() => {
+          this.$store.dispatch("user/GET_USERS").then(() => {
+            this.loading = false;
+          });
+
+          if (JSON.parse(localStorage.getItem("user"))) {
+            this.authUser = JSON.parse(localStorage.getItem("user"));
+          } else {
+            this.$router.replace({
+              name: "login",
+            });
+          }
         })
         .catch((err) => {
-          console.log(err)
-          this.actionMessage =
-            "An error occured when adding " +
-            this.newuser.name +
-            " to SACSHG users.";
+          this.actionMessage = err.message + "! Please refresh this page to retry.";
           this.actionColor = "red";
           this.snackbar = true;
-          this.newuser = {
-                    id: null,
-                    name: '',
-                    type: '',
-                    phone: ''
-                  };
-          this.saving = false;
-          this.dialog = false;
+          this.loading = false;
 
           setTimeout(() => {
             this.actionMessage = "";
@@ -250,21 +290,6 @@ export default {
             this.snackbar = false;
           }, 4000);
         });
-    },
-  },
-
-  mounted() {
-    this.$store.dispatch("user/GET_USERS").then(() => {
-      this.loading = false;
-    });
-
-    if(JSON.parse(localStorage.getItem("user"))) {
-      this.authUser = JSON.parse(localStorage.getItem("user"));
-    } else {
-      this.$router.replace({
-        name: "login",
-      });
-    }
   },
 };
 </script>

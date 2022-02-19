@@ -1,7 +1,7 @@
 <template>
   <v-app
     style="
-      background: url('https://sacn.univa.co.ke/api/v2/files/bg1.jpg')
+      background: url('https://api.staugustineshg.org/api/v2/files/bg1.jpg')
         center/cover;
     "
   >
@@ -19,16 +19,9 @@
         </v-btn>
       </v-snackbar>
       <!--v-app-bar flat app-->
-      <v-app-bar
-        app
-        flat
-        color="white"
-        class="cyan--text"
-        dense
-        elevation="1"
-      >
+      <v-app-bar app flat color="white" class="cyan--text" dense elevation="1">
         <v-img
-          src="https://sacn.univa.co.ke/api/v2/files/logo.png"
+          src="https://api.staugustineshg.org/api/v2/files/logo.png"
           max-width="50px"
           class="ma-3"
         ></v-img>
@@ -79,33 +72,31 @@
                 style="border: 1px solid #efefef"
               >
                 <v-stepper-header>
-                  <v-stepper-step :complete="e1 > 1" step="1" editable>
+                  <v-stepper-step :complete="e1 > 1" step="1">
                     Instructions
                   </v-stepper-step>
 
                   <v-divider></v-divider>
 
-                  <v-stepper-step :complete="e1 > 2" step="2" editable>
+                  <v-stepper-step :complete="e1 > 2" step="2">
                     Applicant Information
                   </v-stepper-step>
 
                   <v-divider></v-divider>
 
-                  <v-stepper-step :complete="e1 > 3" step="3" editable>
+                  <v-stepper-step :complete="e1 > 3" step="3">
                     Occupation / Employment Info
                   </v-stepper-step>
 
                   <v-divider></v-divider>
 
-                  <v-stepper-step :complete="e1 > 4" step="4" editable>
+                  <v-stepper-step :complete="e1 > 4" step="4">
                     Beneficiaries
                   </v-stepper-step>
 
                   <v-divider></v-divider>
 
-                  <v-stepper-step step="5" editable>
-                    Next of Kin
-                  </v-stepper-step>
+                  <v-stepper-step step="5"> Next of Kin </v-stepper-step>
                 </v-stepper-header>
 
                 <v-stepper-items>
@@ -155,7 +146,7 @@
                             <v-btn
                               outlined
                               color="info"
-                              href="https://sacn.univa.co.ke/api/v2/files/Appendix II MEMBERSHIP APPLICATION FORM.pdf"
+                              href="https://api.staugustineshg.org/api/v2/files/Appendix II MEMBERSHIP APPLICATION FORM.pdf"
                               ><v-icon left>download</v-icon> Download
                               Registration Form</v-btn
                             >
@@ -191,6 +182,14 @@
                                   dense
                                   label="First Name*"
                                   v-model="newmember.applicant.first_name"
+                                  :error-messages="firstNameErrors"
+                                  :counter="20"
+                                  @input="
+                                    $v.newmember.applicant.first_name.$touch()
+                                  "
+                                  @blur="
+                                    $v.newmember.applicant.first_name.$touch()
+                                  "
                                 ></v-text-field>
                               </v-col>
                               <v-col cols="12" sm="12" md="6">
@@ -199,6 +198,14 @@
                                   dense
                                   label="Last Name*"
                                   v-model="newmember.applicant.surname"
+                                  :error-messages="surnameErrors"
+                                  :counter="20"
+                                  @input="
+                                    $v.newmember.applicant.surname.$touch()
+                                  "
+                                  @blur="
+                                    $v.newmember.applicant.surname.$touch()
+                                  "
                                 ></v-text-field>
                               </v-col>
                               <v-col cols="12" sm="12" md="6">
@@ -216,6 +223,13 @@
                                   dense
                                   outlined
                                   :items="nationalities"
+                                  :error-messages="nationalityErrors"
+                                  @input="
+                                    $v.newmember.applicant.nationality.$touch()
+                                  "
+                                  @blur="
+                                    $v.newmember.applicant.nationality.$touch()
+                                  "
                                 ></v-autocomplete>
                               </v-col>
                               <v-col cols="12" sm="12" md="6">
@@ -224,6 +238,14 @@
                                   dense
                                   label="National ID / Passport No.*"
                                   v-model="newmember.applicant.id_number"
+                                  :error-messages="idNumberErrors"
+                                  :counter="20"
+                                  @input="
+                                    $v.newmember.applicant.id_number.$touch()
+                                  "
+                                  @blur="
+                                    $v.newmember.applicant.id_number.$touch()
+                                  "
                                 ></v-text-field>
                               </v-col>
                               <v-col cols="12" sm="12" md="6">
@@ -232,17 +254,78 @@
                                   dense
                                   label="Phone No.*"
                                   v-model="newmember.applicant.phone_number"
-                                  placeholder="254#########"
+                                  :error-messages="phoneNumberErrors"
+                                  :counter="15"
+                                  @input="
+                                    $v.newmember.applicant.phone_number.$touch()
+                                  "
+                                  @blur="
+                                    $v.newmember.applicant.phone_number.$touch()
+                                  "
                                 ></v-text-field>
                               </v-col>
                               <v-col cols="12" sm="12" md="6">
-                                <v-text-field
-                                  label="Date of Birth*"
-                                  v-model="newmember.applicant.date_of_birth"
-                                  placeholder="dd-mm-yyyy"
-                                  outlined
-                                  dense
-                                ></v-text-field>
+                                <v-menu
+                                  ref="menu1"
+                                  v-model="menu1"
+                                  :close-on-content-click="false"
+                                  :return-value.sync="
+                                    newmember.applicant.date_of_birth
+                                  "
+                                  transition="scale-transition"
+                                  offset-y
+                                  min-width="auto"
+                                >
+                                  <template v-slot:activator="{ on, attrs }">
+                                    <v-text-field
+                                      label="Date of Birth*"
+                                      v-model="
+                                        newmember.applicant.date_of_birth
+                                      "
+                                      outlined
+                                      dense
+                                      readonly
+                                      v-bind="attrs"
+                                      v-on="on"
+                                      :error-messages="dateOfBirthErrors"
+                                      @input="
+                                        $v.newmember.applicant.date_of_birth.$touch()
+                                      "
+                                      @blur="
+                                        $v.newmember.applicant.date_of_birth.$touch()
+                                      "
+                                    ></v-text-field>
+                                  </template>
+                                  <v-date-picker
+                                    v-model="newmember.applicant.date_of_birth"
+                                    no-title
+                                    scrollable
+                                    :max="
+                                      new Date().toISOString().substr(0, 10)
+                                    "
+                                    min="1940-01-01"
+                                  >
+                                    <v-spacer></v-spacer>
+                                    <v-btn
+                                      text
+                                      color="primary"
+                                      @click="menu1 = false"
+                                    >
+                                      Cancel
+                                    </v-btn>
+                                    <v-btn
+                                      text
+                                      color="primary"
+                                      @click="
+                                        $refs.menu1.save(
+                                          newmember.applicant.date_of_birth
+                                        )
+                                      "
+                                    >
+                                      OK
+                                    </v-btn>
+                                  </v-date-picker>
+                                </v-menu>
                               </v-col>
                               <v-col cols="12" sm="12" md="4">
                                 <v-autocomplete
@@ -251,6 +334,11 @@
                                   dense
                                   outlined
                                   :items="['Male', 'Female', 'Other']"
+                                  :error-messages="genderErrors"
+                                  @input="
+                                    $v.newmember.applicant.gender.$touch()
+                                  "
+                                  @blur="$v.newmember.applicant.gender.$touch()"
                                 ></v-autocomplete>
                               </v-col>
                               <v-col cols="12" sm="12" md="4">
@@ -265,6 +353,13 @@
                                     'Widowed',
                                     'Other',
                                   ]"
+                                  :error-messages="maritalStatusErrors"
+                                  @input="
+                                    $v.newmember.applicant.marital_status.$touch()
+                                  "
+                                  @blur="
+                                    $v.newmember.applicant.marital_status.$touch()
+                                  "
                                 ></v-autocomplete>
                               </v-col>
                               <v-col cols="12" sm="12" md="4">
@@ -274,6 +369,13 @@
                                   dense
                                   outlined
                                   :items="['Catholic', 'Other']"
+                                  :error-messages="religionErrors"
+                                  @input="
+                                    $v.newmember.applicant.religion.$touch()
+                                  "
+                                  @blur="
+                                    $v.newmember.applicant.religion.$touch()
+                                  "
                                 ></v-autocomplete>
                               </v-col>
                             </v-row>
@@ -298,6 +400,13 @@
                                           id="passport"
                                           ref="passport"
                                           @change="handleUpload"
+                                          :error-messages="passportErrors"
+                                          @input="
+                                            $v.newmember.applicant.passport.$touch()
+                                          "
+                                          @blur="
+                                            $v.newmember.applicant.passport.$touch()
+                                          "
                                         ></v-file-input>
                                       </v-col>
                                       <v-col cols="12">
@@ -310,6 +419,13 @@
                                           prepend-icon="mdi-card-account-details-outline"
                                           id="idscan"
                                           ref="idscan"
+                                          :error-messages="idscanErrors"
+                                          @input="
+                                            $v.newmember.applicant.idscan.$touch()
+                                          "
+                                          @blur="
+                                            $v.newmember.applicant.idscan.$touch()
+                                          "
                                         ></v-file-input>
                                       </v-col>
                                       <v-col cols="12">
@@ -322,6 +438,13 @@
                                           prepend-icon="mdi-id-card"
                                           id="kra"
                                           ref="kra"
+                                          :error-messages="kraErrors"
+                                          @input="
+                                            $v.newmember.applicant.kra.$touch()
+                                          "
+                                          @blur="
+                                            $v.newmember.applicant.kra.$touch()
+                                          "
                                         ></v-file-input>
                                       </v-col>
                                       <v-col cols="12">
@@ -336,6 +459,13 @@
                                           prepend-icon="mdi-form-select"
                                           id="application_form"
                                           ref="application_form"
+                                          :error-messages="applicationFormErrors"
+                                          @input="
+                                            $v.newmember.applicant.application_form.$touch()
+                                          "
+                                          @blur="
+                                            $v.newmember.applicant.application_form.$touch()
+                                          "
                                         ></v-file-input>
                                       </v-col>
                                     </v-row>
@@ -355,6 +485,9 @@
                               outlined
                               label="Current Address"
                               v-model="newmember.applicant.address"
+                              :error-messages="addressErrors"
+                              @input="$v.newmember.applicant.address.$touch()"
+                              @blur="$v.newmember.applicant.address.$touch()"
                             ></v-text-field>
                           </v-col>
                           <v-col cols="12" sm="12" md="4">
@@ -363,6 +496,9 @@
                               outlined
                               label="Area of Residence"
                               v-model="newmember.applicant.residence"
+                              :error-messages="residenceErrors"
+                              @input="$v.newmember.applicant.residence.$touch()"
+                              @blur="$v.newmember.applicant.residence.$touch()"
                             ></v-text-field>
                           </v-col>
                           <v-col cols="12" sm="12" md="4">
@@ -375,6 +511,9 @@
                               label="County"
                               v-model="newmember.applicant.county_id"
                               @change="countyTowns"
+                              :error-messages="countyIdErrors"
+                              @input="$v.newmember.applicant.county_id.$touch()"
+                              @blur="$v.newmember.applicant.county_id.$touch()"
                             ></v-autocomplete>
                           </v-col>
                           <v-col cols="12" sm="12" md="4">
@@ -388,6 +527,9 @@
                               v-model="newmember.applicant.town_id"
                               :loading="townloading"
                               :disabled="towndisabled"
+                              :error-messages="townIdErrors"
+                              @input="$v.newmember.applicant.town_id.$touch()"
+                              @blur="$v.newmember.applicant.town_id.$touch()"
                             ></v-autocomplete>
                           </v-col>
                           <v-col cols="12" sm="12" md="6">
@@ -396,13 +538,18 @@
                               outlined
                               label="Estate/Village"
                               v-model="newmember.applicant.estate"
+                              :error-messages="estateErrors"
+                              @input="$v.newmember.applicant.estate.$touch()"
+                              @blur="$v.newmember.applicant.estate.$touch()"
                             ></v-text-field>
                           </v-col>
                         </v-row>
                       </v-card-text>
                     </v-card>
 
-                    <v-btn color="primary" @click="e1 = 3"> Continue </v-btn>
+                    <v-btn color="primary" @click="applicantNext()">
+                      Continue
+                    </v-btn>
 
                     <v-btn text @click="e1 = 1"> Back </v-btn>
                   </v-stepper-content>
@@ -459,13 +606,56 @@
                             ></v-text-field>
                           </v-col>
                           <v-col cols="12" md="3">
-                            <v-text-field
-                              label="Start Date"
-                              outlined
-                              dense
-                              placeholder="dd-mm-yyyy"
-                              v-model="newmember.occupation.employment_date"
-                            ></v-text-field>
+                            <v-menu
+                              ref="menu2"
+                              v-model="menu2"
+                              :close-on-content-click="false"
+                              :return-value.sync="
+                                newmember.occupation.employment_date
+                              "
+                              transition="scale-transition"
+                              offset-y
+                              min-width="auto"
+                            >
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-text-field
+                                  label="Start Date"
+                                  v-model="newmember.occupation.employment_date"
+                                  outlined
+                                  dense
+                                  readonly
+                                  v-bind="attrs"
+                                  v-on="on"
+                                ></v-text-field>
+                              </template>
+                              <v-date-picker
+                                v-model="newmember.occupation.employment_date"
+                                no-title
+                                scrollable
+                                :max="new Date().toISOString().substr(0, 10)"
+                                min="1940-01-01"
+                              >
+                                <v-spacer></v-spacer>
+                                <v-btn
+                                  text
+                                  color="primary"
+                                  @click="menu2 = false"
+                                >
+                                  Cancel
+                                </v-btn>
+                                <v-btn
+                                  text
+                                  color="primary"
+                                  @click="
+                                    $refs.menu2.save(
+                                      newmember.occupation.employment_date
+                                    )
+                                  "
+                                >
+                                  OK
+                                </v-btn>
+                              </v-date-picker>
+                            </v-menu>
                           </v-col>
                           <v-col cols="12" md="3">
                             <v-autocomplete
@@ -541,13 +731,56 @@
                             ></v-text-field>
                           </v-col>
                           <v-col cols="12" md="3">
-                            <v-text-field
-                              label="Start Date"
-                              outlined
-                              dense
-                              placeholder="dd-mm-yyyy"
-                              v-model="newmember.occupation.employment_date"
-                            ></v-text-field>
+                            <v-menu
+                              ref="menu3"
+                              v-model="menu3"
+                              :close-on-content-click="false"
+                              :return-value.sync="
+                                newmember.occupation.employment_date
+                              "
+                              transition="scale-transition"
+                              offset-y
+                              min-width="auto"
+                            >
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-text-field
+                                  label="Start Date"
+                                  v-model="newmember.occupation.employment_date"
+                                  outlined
+                                  dense
+                                  readonly
+                                  v-bind="attrs"
+                                  v-on="on"
+                                ></v-text-field>
+                              </template>
+                              <v-date-picker
+                                v-model="newmember.occupation.employment_date"
+                                no-title
+                                scrollable
+                                :max="new Date().toISOString().substr(0, 10)"
+                                min="1940-01-01"
+                              >
+                                <v-spacer></v-spacer>
+                                <v-btn
+                                  text
+                                  color="primary"
+                                  @click="menu3 = false"
+                                >
+                                  Cancel
+                                </v-btn>
+                                <v-btn
+                                  text
+                                  color="primary"
+                                  @click="
+                                    $refs.menu3.save(
+                                      newmember.occupation.employment_date
+                                    )
+                                  "
+                                >
+                                  OK
+                                </v-btn>
+                              </v-date-picker>
+                            </v-menu>
                           </v-col>
                           <v-col cols="12" md="3">
                             <v-autocomplete
@@ -846,7 +1079,11 @@
                       </v-card-text>
                     </v-card>
 
-                    <v-btn color="primary" @click.prevent="saveMemberExt">
+                    <v-btn
+                      color="primary"
+                      @click.prevent="saveMemberExt"
+                      :loading="saving"
+                    >
                       Submit
                     </v-btn>
                     <v-btn text @click="e1 = 4"> Back </v-btn>
@@ -864,15 +1101,26 @@
 <script>
 import { mapActions, mapGetters } from "vuex";
 import axios from "axios";
+import { validationMixin } from "vuelidate";
+import {
+  required,
+  maxLength,
+  minLength,
+  email,
+} from "vuelidate/lib/validators";
 
 export default {
   name: "Register",
+
   data() {
     return {
       e1: 1,
       snackbar: false,
       dialog: false,
       menu: false,
+      menu1: false,
+      menu2: false,
+      menu3: false,
       beneficiaryDialog: false,
       dialogDelete: false,
       actionColor: "black",
@@ -883,6 +1131,7 @@ export default {
       towndisabled: true,
       townloading1: false,
       towndisabled1: true,
+      saving: false,
       employed: "",
       income: [
         "Kshs. 0 - 50,000",
@@ -1050,7 +1299,7 @@ export default {
           nationality: "",
           gender: "",
           marital_status: "",
-          date_of_birth: null,
+          date_of_birth: new Date().toISOString().substr(0, 10),
           phone_number: "",
           address: "",
           residence: "",
@@ -1062,7 +1311,7 @@ export default {
         occupation: {
           member_id: null,
           current_employer: "",
-          employment_date: "",
+          employment_date: new Date().toISOString().substr(0, 10),
           employer_phone: "",
           employer_email: "",
           employer_county: null,
@@ -1071,6 +1320,7 @@ export default {
         },
         nok: {
           member_id: null,
+          name: "",
           relationship: "",
           mobile_number: "",
           id_passport: "",
@@ -1078,6 +1328,46 @@ export default {
         beneficiaries: [],
       },
     };
+  },
+
+  mixins: [validationMixin],
+  validations: {
+    newmember: {
+      applicant: {
+        id_number: { required, maxLength: maxLength(20) },
+        group_id: 2,
+        salutation: { required },
+        first_name: { required, maxLength: maxLength(20) },
+        surname: { required, maxLength: maxLength(20) },
+        nationality: { required },
+        gender: { required },
+        marital_status: { required },
+        date_of_birth: { required },
+        phone_number: {
+          required,
+          maxLength: maxLength(15),
+          minLength: minLength(4),
+        },
+        address: { required },
+        residence: { required },
+        town_id: { required },
+        county_id: { required },
+        estate: { required },
+        religion: { required },
+        passport: { required },
+        idscan: { required },
+        kra: { required },
+        application_form: { required }
+      },
+    },
+    name: { required, maxLength: maxLength(10), minLength: minLength(3) },
+    email: { required, email },
+    select: { required },
+    checkbox: {
+      checked(val) {
+        return val;
+      },
+    },
   },
 
   computed: {
@@ -1088,6 +1378,158 @@ export default {
     }),
     formTitle() {
       return this.editedIndex === -1 ? "New Beneficiary" : "Edit Beneficiary";
+    },
+
+    firstNameErrors() {
+      const errors = [];
+      if (!this.$v.newmember.applicant.first_name.$dirty) return errors;
+      !this.$v.newmember.applicant.first_name.maxLength &&
+        errors.push("Name must be at most 10 characters long");
+      !this.$v.newmember.applicant.first_name.required &&
+        errors.push("Name is required.");
+      return errors;
+    },
+
+    idNumberErrors() {
+      const errors = [];
+      if (!this.$v.newmember.applicant.id_number.$dirty) return errors;
+      !this.$v.newmember.applicant.id_number.maxLength &&
+        errors.push("ID/Passport No. must be at most 20 characters long");
+      !this.$v.newmember.applicant.id_number.required &&
+        errors.push("ID/Passport No. is required.");
+      return errors;
+    },
+
+    surnameErrors() {
+      const errors = [];
+      if (!this.$v.newmember.applicant.surname.$dirty) return errors;
+      !this.$v.newmember.applicant.surname.maxLength &&
+        errors.push("Name must be at most 20 characters long");
+      !this.$v.newmember.applicant.surname.required &&
+        errors.push("Name is required.");
+      return errors;
+    },
+
+    nationalityErrors() {
+      const errors = [];
+      if (!this.$v.newmember.applicant.nationality.$dirty) return errors;
+      !this.$v.newmember.applicant.nationality.required &&
+        errors.push("Nationality is required.");
+      return errors;
+    },
+
+    genderErrors() {
+      const errors = [];
+      if (!this.$v.newmember.applicant.gender.$dirty) return errors;
+      !this.$v.newmember.applicant.gender.required &&
+        errors.push("Gender is required.");
+      return errors;
+    },
+
+    maritalStatusErrors() {
+      const errors = [];
+      if (!this.$v.newmember.applicant.marital_status.$dirty) return errors;
+      !this.$v.newmember.applicant.marital_status.required &&
+        errors.push("Marital Status is required.");
+      return errors;
+    },
+
+    dateOfBirthErrors() {
+      const errors = [];
+      if (!this.$v.newmember.applicant.date_of_birth.$dirty) return errors;
+      !this.$v.newmember.applicant.date_of_birth.required &&
+        errors.push("Date of Birth is required.");
+      return errors;
+    },
+
+    phoneNumberErrors() {
+      const errors = [];
+      if (!this.$v.newmember.applicant.phone_number.$dirty) return errors;
+      !this.$v.newmember.applicant.phone_number.maxLength &&
+        errors.push("Phone number must be at most 15 characters long");
+      !this.$v.newmember.applicant.phone_number.required &&
+        errors.push("Phone number is required.");
+      return errors;
+    },
+
+    addressErrors() {
+      const errors = [];
+      if (!this.$v.newmember.applicant.address.$dirty) return errors;
+      !this.$v.newmember.applicant.address.required &&
+        errors.push("Address is required.");
+      return errors;
+    },
+
+    residenceErrors() {
+      const errors = [];
+      if (!this.$v.newmember.applicant.residence.$dirty) return errors;
+      !this.$v.newmember.applicant.residence.required &&
+        errors.push("Residence is required.");
+      return errors;
+    },
+
+    townIdErrors() {
+      const errors = [];
+      if (!this.$v.newmember.applicant.town_id.$dirty) return errors;
+      !this.$v.newmember.applicant.town_id.required &&
+        errors.push("Town is required.");
+      return errors;
+    },
+
+    countyIdErrors() {
+      const errors = [];
+      if (!this.$v.newmember.applicant.county_id.$dirty) return errors;
+      !this.$v.newmember.applicant.county_id.required &&
+        errors.push("County is required.");
+      return errors;
+    },
+
+    estateErrors() {
+      const errors = [];
+      if (!this.$v.newmember.applicant.estate.$dirty) return errors;
+      !this.$v.newmember.applicant.estate.required &&
+        errors.push("Estate is required.");
+      return errors;
+    },
+
+    religionErrors() {
+      const errors = [];
+      if (!this.$v.newmember.applicant.religion.$dirty) return errors;
+      !this.$v.newmember.applicant.religion.required &&
+        errors.push("Religion is required.");
+      return errors;
+    },
+
+    passportErrors() {
+      const errors = [];
+      if (!this.$v.newmember.applicant.passport.$dirty) return errors;
+      !this.$v.newmember.applicant.passport.required &&
+        errors.push("Passport photo is required.");
+      return errors;
+    },
+
+    idscanErrors() {
+      const errors = [];
+      if (!this.$v.newmember.applicant.idscan.$dirty) return errors;
+      !this.$v.newmember.applicant.idscan.required &&
+        errors.push("Copy of ID/passport is required.");
+      return errors;
+    },
+
+    kraErrors() {
+      const errors = [];
+      if (!this.$v.newmember.applicant.kra.$dirty) return errors;
+      !this.$v.newmember.applicant.kra.required &&
+        errors.push("Copy of KRA PIN Certificate is required.");
+      return errors;
+    },
+
+    applicationFormErrors() {
+      const errors = [];
+      if (!this.$v.newmember.applicant.application_form.$dirty) return errors;
+      !this.$v.newmember.applicant.application_form.required &&
+        errors.push("Duly filled application form is required.");
+      return errors;
     },
   },
 
@@ -1104,36 +1546,185 @@ export default {
   },
 
   methods: {
+    applicantNext() {
+      this.$v.$touch();
+
+      var proceed = true;
+
+      if (this.firstNameErrors.length != 0) proceed = false;
+      if (this.idNumberErrors.length != 0) proceed = false;
+      if (this.surnameErrors.length != 0) proceed = false;
+      if (this.nationalityErrors.length != 0) proceed = false;
+      if (this.genderErrors.length != 0) proceed = false;
+      if (this.maritalStatusErrors.length != 0) proceed = false;
+      if (this.dateOfBirthErrors.length != 0) proceed = false;
+      if (this.phoneNumberErrors.length != 0) proceed = false;
+      if (this.addressErrors.length != 0) proceed = false;
+      if (this.residenceErrors.length != 0) proceed = false;
+      if (this.townIdErrors.length != 0) proceed = false;
+      if (this.countyIdErrors.length != 0) proceed = false;
+      if (this.estateErrors.length != 0) proceed = false;
+      if (this.religionErrors.length != 0) proceed = false;
+      if (this.passportErrors.length != 0) proceed = false;
+      if (this.idscanErrors.length != 0) proceed = false;
+      if (this.kraErrors.length != 0) proceed = false;
+      if (this.applicationFormErrors.length != 0) proceed = false;
+
+      if (proceed) {
+        this.e1 = 3;
+      } else {
+        this.actionMessage = "Kindly correct the errors in the form before you can proceed. Make sure you have filled in all required fields.";
+        this.actionColor = "red";
+        this.snackbar = true;
+
+        setTimeout(() => {
+          this.actionMessage = "";
+          this.actionColor = "black";
+          this.snackbar = false;
+        }, 4000);
+      }
+    },
     ...mapActions({
       addMember: "member/SAVE_MEMBER",
     }),
     saveMemberExt() {
+      this.saving = true;
       let formData = new FormData();
 
-      formData.append("member", JSON.stringify(this.newmember));
-      formData.append("passport_photo", this.newmember.applicant.passport);
-      formData.append("id_passport", this.newmember.applicant.idscan);
-      formData.append("kra", this.newmember.applicant.kra);
-      formData.append("application", this.newmember.applicant.application_form);
+      var benefs = [];
 
-      axios
-        .post("members/ext", formData, {
+      this.newmember.beneficiaries.forEach((benef) => {
+        benefs.push({
+          fullName: benef.full_name,
+          relationship: benef.relationship,
+          dateOfBirth: benef.date_of_birth,
+          gender: benef.gender,
+          allocation: benef.allocation,
+        });
+      });
+
+      var memberSave = {
+        member: {
+          idNumber: this.newmember.applicant.id_number,
+          salutation: this.newmember.applicant.salutation,
+          firstName: this.newmember.applicant.first_name,
+          surname: this.newmember.applicant.surname,
+          otherNames: this.newmember.applicant.other_names,
+          nationality: this.newmember.applicant.nationality,
+          gender: this.newmember.applicant.gender,
+          maritalStatus: this.newmember.applicant.marital_status,
+          dateOfBirth: this.newmember.applicant.date_of_birth,
+          phoneNumber: this.newmember.applicant.phone_number,
+          address: this.newmember.applicant.address,
+          residence: this.newmember.applicant.residence,
+          townId: this.newmember.applicant.town_id,
+          countyId: this.newmember.applicant.county_id,
+          estate: this.newmember.applicant.estate,
+          religion: this.newmember.applicant.religion,
+        },
+        occupation: {
+          memberId: this.newmember.occupation.member_id,
+          currentEmployer: this.newmember.occupation.current_employer,
+          employmentDate: this.newmember.occupation.employment_date,
+          employerPhone: this.newmember.occupation.employer_phone,
+          employerEmail: this.newmember.occupation.employer_email,
+          employerCounty: this.newmember.occupation.employer_county,
+          employerCity: this.newmember.occupation.employer_city,
+          avgMonthlyIncome: this.newmember.occupation.avg_monthly_income,
+        },
+        nok: {
+          memberId: this.newmember.nok.member_id,
+          name: this.newmember.nok.name,
+          relationship: this.newmember.nok.relationship,
+          mobileNumber: this.newmember.nok.mobile_number,
+          idPassport: this.newmember.nok.id_passport,
+        },
+        beneficiaries: benefs,
+      };
+
+      formData.append("member", JSON.stringify(memberSave));
+      formData.append("passportPhoto", this.newmember.applicant.passport);
+      formData.append("idOrPassportScan", this.newmember.applicant.idscan);
+      formData.append("kraPin", this.newmember.applicant.kra);
+      formData.append(
+        "applicationForm",
+        this.newmember.applicant.application_form
+      );
+
+      var instance = axios.create();
+      delete instance.defaults.headers.common["Authorization"];
+
+      instance
+        .post("https://jsaapp.staugustineshg.org/auth/member", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
         })
-        .then(() => {
-          //
+        .then((res) => {
+          this.saving = false;
+          if (res.data.statusCodeValue) {
+            if (res.data.statusCodeValue === 200) {
+              this.saving = true;
+              this.actionMessage =
+                "Your registration request has been received. You will receive an email once the vetting process is complete.";
+              this.actionColor = "success";
+              this.snackbar = true;
+
+              setTimeout(() => {
+                this.actionMessage = "";
+                this.actionColor = "black";
+                this.snackbar = false;
+                document.location.href = "https://www.staugustineshg.co.ke";
+              }, 4000);
+            } else {
+              this.actionMessage = res.data.statusCode;
+              this.actionColor = "warning";
+              this.snackbar = true;
+
+              setTimeout(() => {
+                this.actionMessage = "";
+                this.actionColor = "black";
+                this.snackbar = false;
+                //document.location.href = "https://www.staugustineshg.co.ke";
+              }, 4000);
+            }
+          } else {
+            this.actionMessage = "An Error has occured";
+            this.actionColor = "red";
+            this.snackbar = true;
+
+            setTimeout(() => {
+              this.actionMessage = "";
+              this.actionColor = "black";
+              this.snackbar = false;
+              //document.location.href = "https://www.staugustineshg.co.ke";
+            }, 4000);
+          }
         })
         .catch(() => {
-          console.log("An error has occurred");
+          this.saving = false;
+
+          this.actionMessage = "An Error has occured";
+          this.actionColor = "red";
+          this.snackbar = true;
+
+          setTimeout(() => {
+            this.actionMessage = "";
+            this.actionColor = "black";
+            this.snackbar = false;
+            //document.location.href = "https://www.staugustineshg.co.ke";
+          }, 4000);
         });
     },
     handleUpload(typ) {
-      if(typ==='passport'){
-        this.newmember.applicant.passport_f_type = this.newmember.applicant.passport.name.split('.').pop();
-      } else if(typ==='passport'){
-        this.newmember.applicant.passport_f_type = this.newmember.applicant.passport.name.split('.').pop();
+      if (typ === "passport") {
+        this.newmember.applicant.passport_f_type = this.newmember.applicant.passport.name
+          .split(".")
+          .pop();
+      } else if (typ === "passport") {
+        this.newmember.applicant.passport_f_type = this.newmember.applicant.passport.name
+          .split(".")
+          .pop();
       }
     },
     saveDate(date) {

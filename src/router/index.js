@@ -1,39 +1,26 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Dashboard from '../views/Dashboard.vue'
-import Login from '../views/Login.vue'
-import News from '../views/News.vue'
-import Events from '../views/Events.vue'
-import CSI from '../views/CSI.vue'
-import Media from '../views/Media.vue'
-import Members from '../views/Members.vue'
-import Categories from '../views/Categories.vue'
-import Users from '../views/Users.vue'
-import Messages from '../views/Messages.vue'
-import Settings from '../views/Settings.vue'
-import Test from '../views/Test.vue'
-import Register from '../views/Register.vue'
-import PageNotFound from '../components/PageNotFound.vue';
 
 import store from '@/store'
 
 Vue.use(VueRouter)
 
+
 const routes = [
   {
     path: '/',
     name: 'dashboard',
-    component: Dashboard,
+    component: () => import('../views/Dashboard.vue'),
     meta: {
       auth: true,
       title: 'JSASHG',
-      access: 0
+      access: 1
     }
   },
   {
     path: '/login',
     name: 'login',
-    component: Login,
+    component: () => import('../views/Login.vue'),
     meta: {
       auth: false,
       title: 'JSASHG',
@@ -43,97 +30,117 @@ const routes = [
   {
     path: '/news',
     name: 'news',
-    component: News,
+    component: () => import('../views/News.vue'),
     meta: {
       auth: true,
       title: 'JSASHG',
-      access: 0
+      access: 1
     }
   },
   {
     path: '/events',
     name: 'events',
-    component: Events,
+    component: () => import('../views/Events.vue'),
     meta: {
       auth: true,
       title: 'JSASHG',
-      access: 0
+      access: 1
     }
   },
   {
     path: '/csi',
     name: 'csi',
-    component: CSI,
+    component: () => import('../views/CSI.vue'),
     meta: {
       auth: true,
       title: 'JSASHG',
-      access: 0
+      access: 1
     }
   },
   {
     path: '/media',
     name: 'media',
-    component: Media,
+    component: () => import('../views/Media.vue'),
     meta: {
       auth: true,
       title: 'JSASHG',
-      access: 0
+      access: 1
     }
   },
   {
     path: '/members',
     name: 'members',
-    component: Members,
+    component: () => import('../views/Members.vue'),
     meta: {
       auth: true,
       title: 'JSASHG',
-      access: 0
+      access: 3
+    }
+  },
+  {
+    path: '/loans',
+    name: 'loans',
+    component: () => import('../views/Loans.vue'),
+    meta: {
+      auth: true,
+      title: 'JSASHG',
+      access: 3
+    }
+  },
+  {
+    path: '/loan/:id',
+    name: 'loan',
+    component: () => import('../views/Loan.vue'),
+    meta: {
+      auth: true,
+      title: 'JSASHG',
+      access: 3
     }
   },
   {
     path: '/categories',
     name: 'categories',
-    component: Categories,
+    component: () => import('../views/Categories.vue'),
     meta: {
       auth: true,
       title: 'JSASHG',
-      access: 0
+      access: 2
     }
   },
   {
     path: '/users',
     name: 'users',
-    component: Users,
+    component: () => import('../views/Users.vue'),
     meta: {
       auth: true,
       title: 'JSASHG',
-      access: 0
+      access: 3
     }
   },
   {
     path: '/messages',
     name: 'messages',
-    component: Messages,
+    component: () => import('../views/Messages.vue'),
     meta: {
       auth: true,
       title: 'JSASHG',
-      access: 0
+      access: 1
     }
   },
   {
     path: '/settings',
     name: 'settings',
-    component: Settings,
+    component: () => import('../views/Settings.vue'),
     meta: {
       auth: true,
       title: 'JSASHG',
-      access: 0
+      access: 2
     }
   },
   {
     path: '/test',
     name: 'test',
-    component: Test,
+    component: () => import('../views/Test.vue'),
     meta: {
       auth: false,
       title: 'Test Page',
@@ -143,14 +150,47 @@ const routes = [
   {
     path: '/register',
     name: 'register',
-    component: Register,
+    component: () => import('../views/Register.vue'),
     meta: {
       auth: false,
       title: 'Registration',
       access: 0
     }
   },
-  { path: "*", component: PageNotFound }
+  {
+    path: '/reset-password',
+    name: 'reset',
+    component: () => import('../views/ResetPassword.vue'),
+    meta: {
+      auth: false,
+      title: 'Reset Password',
+      access: 0
+    }
+  },
+  {
+    path: '/reset-password/:token',
+    name: 'confirm-reset',
+    component: () => import('../views/ConfirmReset.vue'),
+    meta: {
+      auth: false,
+      title: 'Reset Password',
+      access: 0
+    },
+  },
+  {
+    path: '/member/:id',
+    name: 'member',
+    component: () => import('../views/Member.vue'),
+    meta: {
+      auth: true,
+      title: 'Member',
+      access: 3
+    }
+  },
+  {
+    path: "*",
+    component: () => import('../components/PageNotFound.vue')
+  }
 ]
 
 const router = new VueRouter({
@@ -162,15 +202,16 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   if (to.meta.auth) {
     console.log("authenticated?", store.getters['user/AUTHENTICATED']);
-    if (!store.getters['user/AUTHENTICATED']){
+    if (!store.getters['user/AUTHENTICATED']) {
       return next({
         name: 'login'
       })
     }
 
-    if (to.meta.access === 1){
+    if (to.meta.access > 0) {
       var usr = store.getters['user/AUTH_USER']
-      if(usr.type != to.meta.access) {
+
+      if (usr.type && usr.type < to.meta.access) {
         return next({
           name: 'login'
         })

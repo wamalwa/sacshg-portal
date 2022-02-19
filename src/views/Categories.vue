@@ -5,6 +5,7 @@
       :snackbar="snackbar"
       :actionColor="actionColor"
       :actionMessage="actionMessage"
+      :role="authUser.type"
     />
     <v-main class="ma-4">
       <div class="categories">
@@ -63,7 +64,7 @@
               dense
               dark
               color="cyan"
-              src="https://sacn.univa.co.ke/api/v2/files/bg2.png"
+              src="https://api.staugustineshg.org/api/v2/files/bg2.png"
             >
               <v-btn
                 icon
@@ -372,17 +373,33 @@ export default {
   },
 
   mounted() {
-    this.$store.dispatch("category/GET_CATEGORIES").then(() => {
-      this.loading = false;
-    });
+    this.$store
+      .dispatch("user/GET_STATE")
+      .then(() => {
+        this.$store.dispatch("category/GET_CATEGORIES").then(() => {
+          this.loading = false;
+        });
 
-    if (JSON.parse(localStorage.getItem("user"))) {
-      this.authUser = JSON.parse(localStorage.getItem("user"));
-    } else {
-      this.$router.replace({
-        name: "login",
+        if (JSON.parse(localStorage.getItem("user"))) {
+          this.authUser = JSON.parse(localStorage.getItem("user"));
+        } else {
+          this.$router.replace({
+            name: "login",
+          });
+        }
+      })
+      .catch((err) => {
+        this.actionMessage = err.message + "! Please refresh this page to retry.";
+        this.actionColor = "red";
+        this.snackbar = true;
+        this.loading = false;
+
+        setTimeout(() => {
+          this.actionMessage = "";
+          this.actionColor = "black";
+          this.snackbar = false;
+        }, 4000);
       });
-    }
   },
 };
 </script>

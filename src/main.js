@@ -16,7 +16,7 @@ require('@/store/subscriber')
 
 Vue.config.productionTip = false
 
-axios.defaults.baseURL = 'https://sacn.univa.co.ke/api/v2/'
+axios.defaults.baseURL = 'https://api.staugustineshg.org/api/v2/'
 
 let isRefreshing = false;
 let subscribers = [];
@@ -26,6 +26,16 @@ axios.defaults.headers.common['Authorization'] = "Bearer " + store.state.user.au
 axios.interceptors.response.use(response => {
   return response;
 }, err => {
+  if(err == 'Error: Network Error') {
+    const {
+      config
+    } = err;
+
+    console.log('rejecting...', config.url)
+
+    return Promise.reject(err);
+  }
+
   const {
     config,
     response: { status, data }
@@ -69,6 +79,8 @@ axios.interceptors.response.use(response => {
     onRefreshed();
 
     return requestSubscribers;
+  } else {
+    return Promise.reject(err);
   }
 });
 

@@ -5,6 +5,7 @@
       :snackbar="snackbar"
       :actionColor="actionColor"
       :actionMessage="actionMessage"
+      :role="authUser.type"
     />
     <v-main class="ma-4">
       <div class="media">
@@ -29,7 +30,7 @@
               dense
               dark
               color="cyan"
-              src="https://sacn.univa.co.ke/api/v2/files/bg2.png"
+              src="https://api.staugustineshg.org/api/v2/files/bg2.png"
             >
               <v-btn icon dark @click="dialog = false">
                 <v-icon>mdi-close</v-icon>
@@ -41,11 +42,11 @@
                 <v-row class="mt-4">
                   <v-col cols="12">
                     <v-file-input
-                        v-model="newfile.file"
-                        label="File*"
-                        outlined
-                        show-size
-                        dense
+                      v-model="newfile.file"
+                      label="File*"
+                      outlined
+                      show-size
+                      dense
                     ></v-file-input>
                   </v-col>
                 </v-row>
@@ -100,12 +101,12 @@
               <v-tab-item>
                 <v-card flat>
                   <v-card-title>
-                      <v-text-field 
-                        v-model="search" 
-                        outlined 
-                        label="Search" 
-                        dense
-                      ></v-text-field>
+                    <v-text-field
+                      v-model="search"
+                      outlined
+                      label="Search"
+                      dense
+                    ></v-text-field>
                   </v-card-title>
                   <v-card-text>
                     <v-data-table
@@ -115,28 +116,41 @@
                       :loading="loading"
                       loading-text="Loading... Please wait"
                     >
-                    <template #item.actions="{item}">
-                      <v-tooltip top>
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-btn
-                            color="primary"
-                            text
-                            v-bind="attrs"
-                            v-on="on"
-                            fab
-                            @click="copyURL(item.url)"
-                            small
-                          > <v-icon>content_copy</v-icon>
-                          </v-btn>
-                        </template>
-                        <span>Click to copy: {{item.url}} to clipboard</span>
-                      </v-tooltip>
-                    </template>
-                    <template #item.preview="{item}" >
-                        <v-card class="ma-3" :style="{ height: '100px', width: '144px', overflow: 'hidden', backgroundImage: 'url(' + item.url + ')', backgroundSize: 'cover', backgroundRepeat: 'no-repeat', backgroundPosition: 'center' }">
-                            
+                      <template #item.actions="{ item }">
+                        <v-tooltip top>
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-btn
+                              color="primary"
+                              text
+                              v-bind="attrs"
+                              v-on="on"
+                              fab
+                              @click="copyURL(item.url)"
+                              small
+                            >
+                              <v-icon>content_copy</v-icon>
+                            </v-btn>
+                          </template>
+                          <span
+                            >Click to copy: {{ item.url }} to clipboard</span
+                          >
+                        </v-tooltip>
+                      </template>
+                      <template #item.preview="{ item }">
+                        <v-card
+                          class="ma-3"
+                          :style="{
+                            height: '100px',
+                            width: '144px',
+                            overflow: 'hidden',
+                            backgroundImage: 'url(' + item.url + ')',
+                            backgroundSize: 'cover',
+                            backgroundRepeat: 'no-repeat',
+                            backgroundPosition: 'center',
+                          }"
+                        >
                         </v-card>
-                    </template>
+                      </template>
                     </v-data-table>
                   </v-card-text>
                 </v-card>
@@ -173,7 +187,7 @@ export default {
       { text: "Url", value: "url" },
       { text: "Size (bytes)", value: "size", filterable: false },
       { text: "Actions", value: "actions", filterable: false },
-      { text: "Preview", value: "preview", filterable: false }
+      { text: "Preview", value: "preview", filterable: false },
     ],
     saving: false,
     disabled: false,
@@ -182,16 +196,12 @@ export default {
     actionColor: "black",
     actionMessage: "",
     snackbar: false,
-    imagetypes: [
-      "jpg",
-      "jpeg",
-      "png",
-    ],
+    imagetypes: ["jpg", "jpeg", "png"],
     newfile: {
-      file: null
+      file: null,
     },
     authUser: {
-      name: ''
+      name: "",
     },
   }),
 
@@ -210,7 +220,7 @@ export default {
       let formData = new FormData();
 
       formData.append("file", this.newfile.file);
-      
+
       axios
         .post("upload", formData, {
           headers: {
@@ -218,8 +228,7 @@ export default {
           },
         })
         .then(() => {
-          this.actionMessage =
-            "Your file has been uploaded.";
+          this.actionMessage = "Your file has been uploaded.";
           this.actionColor = "success";
           this.snackbar = true;
           this.saving = false;
@@ -241,27 +250,42 @@ export default {
           this.dialog = false;
 
           this.newfile.file = null;
-
         });
     },
 
     copyURL(url) {
       navigator.clipboard.writeText(url);
-    }
+    },
   },
 
   mounted() {
-    this.$store.dispatch("upload/GET_FILES").then(() => {
-      this.loading = false;
-    });
+    this.$store
+      .dispatch("user/GET_STATE")
+      .then(() => {
+        this.$store.dispatch("upload/GET_FILES").then(() => {
+          this.loading = false;
+        });
 
-    if(JSON.parse(localStorage.getItem("user"))) {
-      this.authUser = JSON.parse(localStorage.getItem("user"));
-    } else {
-      this.$router.replace({
-        name: "login",
+        if (JSON.parse(localStorage.getItem("user"))) {
+          this.authUser = JSON.parse(localStorage.getItem("user"));
+        } else {
+          this.$router.replace({
+            name: "login",
+          });
+        }
+      })
+      .catch((err) => {
+        this.actionMessage = err.message + "! Please refresh this page to retry.";
+        this.actionColor = "red";
+        this.snackbar = true;
+        this.loading = false;
+
+        setTimeout(() => {
+          this.actionMessage = "";
+          this.actionColor = "black";
+          this.snackbar = false;
+        }, 4000);
       });
-    }
   },
 };
 </script>
