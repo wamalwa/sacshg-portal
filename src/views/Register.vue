@@ -39,7 +39,7 @@
             </v-btn>
           </template>
           <v-list>
-            <v-list-item href="https://staugustineshg.co.ke">
+            <v-list-item href="https://staugustineshg.org">
               <v-list-item-title>
                 <v-icon left>home</v-icon>
                 <span>Home</span>
@@ -57,7 +57,7 @@
             <v-card-title class="cyan--text lighten-4">
               <h4>Member Self Registration</h4>
               <v-spacer></v-spacer>
-              <v-btn text color="error" href="http://staugustineshg.co.ke">
+              <v-btn text color="error" href="http://staugustineshg.org">
                 Exit <v-icon right>exit_to_app</v-icon>
               </v-btn>
             </v-card-title>
@@ -1674,7 +1674,7 @@ export default {
                 this.actionMessage = "";
                 this.actionColor = "black";
                 this.snackbar = false;
-                document.location.href = "https://www.staugustineshg.co.ke";
+                document.location.href = "https://www.staugustineshg.org";
               }, 4000);
             } else {
               this.actionMessage = res.data.statusCode;
@@ -1685,7 +1685,7 @@ export default {
                 this.actionMessage = "";
                 this.actionColor = "black";
                 this.snackbar = false;
-                //document.location.href = "https://www.staugustineshg.co.ke";
+                //document.location.href = "https://www.staugustineshg.org";
               }, 4000);
             }
           } else {
@@ -1697,7 +1697,7 @@ export default {
               this.actionMessage = "";
               this.actionColor = "black";
               this.snackbar = false;
-              //document.location.href = "https://www.staugustineshg.co.ke";
+              //document.location.href = "https://www.staugustineshg.org";
             }, 4000);
           }
         })
@@ -1712,7 +1712,7 @@ export default {
             this.actionMessage = "";
             this.actionColor = "black";
             this.snackbar = false;
-            //document.location.href = "https://www.staugustineshg.co.ke";
+            //document.location.href = "https://www.staugustineshg.org";
           }, 4000);
         });
     },
@@ -1829,7 +1829,7 @@ export default {
         this.actionMessage = "";
         this.actionColor = "black";
         this.snackbar = false;
-        //document.location.href = "https://www.staugustineshg.co.ke";
+        //document.location.href = "https://www.staugustineshg.org";
       }, 4000);
     },
   },
