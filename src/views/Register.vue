@@ -905,6 +905,7 @@
                                             outlined
                                             dense
                                             :items="[
+                                              'Spouse',
                                               'Child',
                                               'Sibling',
                                               'Parent',

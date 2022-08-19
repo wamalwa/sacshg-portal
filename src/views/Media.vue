@@ -11,7 +11,7 @@
       <div class="media">
         <h1 class="subheading text--gray">
           Media
-          <v-btn outlined color="primary" @click="dialog = true">
+          <v-btn outlined color="primary" @click="showUploadDialog">
             <v-icon left>mdi-plus</v-icon>
             Upload a File
           </v-btn>
@@ -47,6 +47,8 @@
                       outlined
                       show-size
                       dense
+                      counter
+                      :rules="rules"
                     ></v-file-input>
                   </v-col>
                 </v-row>
@@ -61,7 +63,7 @@
               <v-btn
                 color="success darken-1"
                 :loading="saving"
-                :disabled="disabled"
+                :disabled="disabled || !valid"
                 text
                 @click="submitFile"
               >
@@ -200,6 +202,12 @@ export default {
     newfile: {
       file: null,
     },
+    rules: [
+      (value) =>
+        !value ||
+        value.size < (10*1024*1024) ||
+        "File size should be less than 10 MB!",
+    ],
     authUser: {
       name: "",
     },
@@ -210,10 +218,18 @@ export default {
       uploads: "upload/UPLOADS",
       authenticated: "user/AUTHENTICATED",
     }),
+    valid() {
+      return this.newfile.file?.size < 10*1024*1024
+    }
   },
 
   methods: {
+    showUploadDialog() {
+      this.snackbar = false;
+      this.dialog = true;
+    },
     submitFile() {
+      console.log(this.valid);
       this.saving = true;
       this.disabled = true;
 
@@ -241,7 +257,8 @@ export default {
             this.loading = false;
           });
         })
-        .catch(() => {
+        .catch((err) => {
+          console.log(err);
           this.actionMessage =
             "An error occured while uploading the file. Please try again";
           this.actionColor = "red";
@@ -275,7 +292,8 @@ export default {
         }
       })
       .catch((err) => {
-        this.actionMessage = err.message + "! Please refresh this page to retry.";
+        this.actionMessage =
+          err.message + "! Please refresh this page to retry.";
         this.actionColor = "red";
         this.snackbar = true;
         this.loading = false;
