@@ -26,7 +26,7 @@ export default {
 
       data.forEach(function(file) {
         file.isImage = imageExtensions.includes(
-          `|${file.name.split(".").pop()}|`
+          `|${file.name.split(".").pop().toLowerCase()}|`
         );
         file.url = file.url.replaceAll(' ', '%20').replaceAll('(','%28').replaceAll(')','%29');
       });
