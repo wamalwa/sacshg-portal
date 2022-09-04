@@ -34,7 +34,7 @@
                   <v-row>
                     <v-col cols="12" class="col-md-8 py-1">
                       <small>Applicant Name</small><br />
-                      <span class="text-h6">{{ loan.name }} </span>
+                      <span class="text-h6" style="font-family: 'Josefin Sans'!important;">{{ loan.name }} </span>
                     </v-col>
                     <v-col cols="12" class="col-md-4 py-1">
                       <div class="text-right">
@@ -71,19 +71,19 @@
                     </v-col>
                     <v-col cols="12" class="col-md-6 py-1">
                       <small>ID/Passport Number</small><br />
-                      <span class="text-h6">{{ loan.national_id }} </span>
+                      <span class="text-h6" style="font-family: 'Josefin Sans'!important;">{{ loan.national_id }} </span>
                     </v-col>
                     <v-col cols="12" class="col-md-6 py-1">
                       <small>Date of Birth</small><br />
-                      <span class="text-h6">{{ loan.date_of_birth }} </span>
+                      <span class="text-h6" style="font-family: 'Josefin Sans'!important;">{{ loan.date_of_birth | formatDate }} </span>
                     </v-col>
                     <v-col cols="12" class="col-md-6 py-1">
                       <small>Phone Number</small><br />
-                      <span class="text-h6">{{ loan.phone_number }} </span>
+                      <span class="text-h6" style="font-family: 'Josefin Sans'!important;">{{ loan.phone_number }} </span>
                     </v-col>
                     <v-col cols="12" class="col-md-6 py-1">
                       <small>Email Address</small><br />
-                      <span class="text-h6">{{ loan.email_address }} </span>
+                      <span class="text-h6" style="font-family: 'Josefin Sans'!important;">{{ loan.email_address }} </span>
                     </v-col>
                   </v-row>
                   <v-divider class="my-3"></v-divider>

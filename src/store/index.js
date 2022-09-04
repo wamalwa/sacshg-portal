@@ -10,6 +10,7 @@ import member from './member'
 import loan from './loan'
 import landing from './landing'
 import csi from './csi'
+import feedback from "./feedback";
 
 Vue.use(Vuex)
 
@@ -40,6 +41,7 @@ export default new Vuex.Store({
         member,
         loan,
         landing,
-        csi
+        csi,
+        feedback
     }
 })

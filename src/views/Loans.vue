@@ -66,6 +66,12 @@
                           {{ item.status }}
                         </v-chip>
                       </template>
+                      <template v-slot:item.date_of_birth="{ item }">
+                        <span>{{ item.date_of_birth | formatDate }}</span>
+                      </template>
+                      <template v-slot:item.date_created="{ item }">
+                        <span>{{ item.date_created | formatDateTime }}</span>
+                      </template>
                     </v-data-table>
                   </v-card-text>
                 </v-card>

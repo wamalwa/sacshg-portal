@@ -63,7 +63,7 @@
               <v-btn
                 color="success darken-1"
                 :loading="saving"
-                :disabled="disabled || !valid"
+                :disabled="disabled || !isValid"
                 text
                 @click="submitFile"
               >
@@ -218,8 +218,8 @@ export default {
       uploads: "upload/UPLOADS",
       authenticated: "user/AUTHENTICATED",
     }),
-    valid() {
-      return this.newfile.file?.size < 10*1024*1024
+    isValid() {
+      return this.newfile.file?.size < 10*1024*1024;
     }
   },
 
@@ -229,7 +229,7 @@ export default {
       this.dialog = true;
     },
     submitFile() {
-      console.log(this.valid);
+      console.log(this.isValid);
       this.saving = true;
       this.disabled = true;
 

@@ -5,8 +5,10 @@ export default {
     state: {
         carousels: [],
         faqs: [],
+        products: [],
         services: [],
         testimonials: [],
+        dashboard: [],
         website: { id: 0, name: "", web_address: "", mission: "", vision: "", about: "", svc_photo_url: "", address: "", phone: "", email: "" }
     },
 
@@ -14,11 +16,17 @@ export default {
         WEBSITE: state => {
             return state.website;
         },
+        DASHBOARD: state => {
+            return state.dashboard;
+        },
         CAROUSELS: state => {
             return state.carousels;
         },
         FAQS: state => {
             return state.faqs;
+        },
+        PRODUCTS: state => {
+            return state.products;
         },
         SERVICES: state => {
             return state.services;
@@ -31,6 +39,9 @@ export default {
     mutations: {
         SET_WEBSITE: (state, payload) => {
             state.website = payload
+        },
+        SET_DASHBOARD: (state, payload) => {
+            state.dashboard = payload
         },
         UPDATE_COMPONENT: (state, payload) => {
             state.website[payload.key] = payload.val
@@ -58,6 +69,18 @@ export default {
         },
         DELETE_FAQ: (state, payload) => {
             state.faqs.splice(payload.index, 1)
+        },
+        SET_PRODUCTS: (state, payload) => {
+            state.products = payload
+        },
+        ADD_PRODUCT: (state, payload) => {
+            state.products.push(payload)
+        },
+        UPDATE_PRODUCT: (state, payload) => {
+            Object.assign(state.products[payload.index], { text: payload.data });
+        },
+        DELETE_PRODUCT: (state, payload) => {
+            state.products.splice(payload.index, 1)
         },
         SET_SERVICES: (state, payload) => {
             state.services = payload
@@ -89,6 +112,10 @@ export default {
         GET_WEBSITE: async (context) => {
             let { data } = await axios.get('landing/website')
             context.commit('SET_WEBSITE', data)
+        },
+        GET_DASHBOARD: async (context) => {
+            let { data } = await axios.get('dashboard')
+            context.commit('SET_DASHBOARD', data)
         },
         SAVE_COMPONENT: async (context, payload) => {
             console.log(payload);
@@ -137,6 +164,30 @@ export default {
                 axios.delete('landing/faq/' + payload.data.id).then(response => {
                     if (response.data.status === 1000) {
                         context.commit('DELETE_FAQ', { index: payload.index, data: response.data })
+                    }
+                    resolve(response)
+                }).catch(error => {
+                    reject(error)
+                })
+            })
+        },
+        GET_PRODUCTS: async (context) => {
+            let { data } = await axios.get('landing/products')
+            context.commit('SET_PRODUCTS', data)
+        },
+        SAVE_PRODUCT: async (context, payload) => {
+            let { data } = await axios.post('landing/products', payload)
+            context.commit('ADD_PRODUCT', data)
+        },
+        EDIT_PRODUCT: async (context, payload) => {
+            let { data } = await axios.put('landing/products/' + payload.data.id, payload.data)
+            context.commit('UPDATE_PRODUCT', { index: payload.index, data: data })
+        },
+        DELETE_PRODUCT: async (context, payload) => {
+            return new Promise((resolve, reject) => {
+                axios.delete('landing/products/' + payload.data.id).then(response => {
+                    if (response.data.status === 1000) {
+                        context.commit('DELETE_PRODUCT', { index: payload.index, data: response.data })
                     }
                     resolve(response)
                 }).catch(error => {

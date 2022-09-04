@@ -142,35 +142,35 @@
                   <v-row>
                     <v-col cols="12" class="col-md-4 py-1">
                       <small>ID/Passport Number</small><br />
-                      <span class="text-h6">{{ member.id_number }} </span>
+                      <span class="text-h6" style="font-family: 'Josefin Sans'!important;">{{ member.id_number }} </span>
                     </v-col>
                     <v-col cols="12" class="col-md-4 py-1">
                       <small>Date of Birth</small><br />
-                      <span class="text-h6">{{ member.date_of_birth }} </span>
+                      <span class="text-h6" style="font-family: 'Josefin Sans'!important;">{{ member.date_of_birth | formatDate }} </span>
                     </v-col>
                     <v-col cols="12" class="col-md-4 py-1">
                       <small>Phone Number</small><br />
-                      <span class="text-h6">{{ member.phone_number }} </span>
+                      <span class="text-h6" style="font-family: 'Josefin Sans'!important;">{{ member.phone_number }} </span>
                     </v-col>
                     <v-col cols="12" class="col-md-3 py-1">
                       <small>Nationality</small><br />
-                      <span class="text-subtitle-2"
+                      <span class="text-subtitle-2" style="font-family: 'Josefin Sans'!important;"
                         >{{ member.nationality }}
                       </span>
                     </v-col>
                     <v-col cols="12" class="col-md-3 py-1">
                       <small>Gender</small><br />
-                      <span class="text-subtitle-2">{{ member.gender }} </span>
+                      <span class="text-subtitle-2" style="font-family: 'Josefin Sans'!important;">{{ member.gender }} </span>
                     </v-col>
                     <v-col cols="12" class="col-md-3 py-1">
                       <small>Marital Status</small><br />
-                      <span class="text-subtitle-2"
+                      <span class="text-subtitle-2" style="font-family: 'Josefin Sans'!important;"
                         >{{ member.marital_status }}
                       </span>
                     </v-col>
                     <v-col cols="12" class="col-md-3 py-1">
                       <small>Religion</small><br />
-                      <span class="text-subtitle-2"
+                      <span class="text-subtitle-2" style="font-family: 'Josefin Sans'!important;"
                         >{{ member.religion }}
                       </span>
                     </v-col>
@@ -182,17 +182,17 @@
                     </v-col>
                     <v-col cols="12" class="col-md-6 py-1">
                       <small>Current Address</small><br />
-                      <span class="text-subtitle-2">{{ member.address }} </span>
+                      <span class="text-subtitle-2" style="font-family: 'Josefin Sans'!important;">{{ member.address }} </span>
                     </v-col>
                     <v-col cols="12" class="col-md-6 py-1">
                       <small>Area of Residence</small><br />
-                      <span class="text-subtitle-2"
+                      <span class="text-subtitle-2" style="font-family: 'Josefin Sans'!important;"
                         >{{ member.residence }}
                       </span>
                     </v-col>
                     <v-col cols="12" class="col-md-6 py-1">
                       <small>Estate/Village</small><br />
-                      <span class="text-subtitle-2">{{ member.estate }} </span>
+                      <span class="text-subtitle-2" style="font-family: 'Josefin Sans'!important;">{{ member.estate }} </span>
                     </v-col>
                   </v-row>
                 </v-card-text>
@@ -213,6 +213,9 @@
                             <v-toolbar-title>Beneficiaries</v-toolbar-title>
                           </v-toolbar>
                         </template>
+                        <template v-slot:item.date_of_birth="{ item }">
+                          <span>{{ item.date_of_birth | formatDate }}</span>
+                        </template>
                       </v-data-table>
                     </v-col>
                   </v-row>
@@ -223,23 +226,23 @@
                     </v-col>
                     <v-col cols="12" class="col-md-6 py-1">
                       <small>Full Name</small><br />
-                      <span class="text-subtitle-2">{{ nok.name }} </span>
+                      <span class="text-subtitle-2" style="font-family: 'Josefin Sans'!important;">{{ nok.name }} </span>
                     </v-col>
                     <v-col cols="12" class="col-md-6 py-1">
                       <small>Relationship to Member</small><br />
-                      <span class="text-subtitle-2"
+                      <span class="text-subtitle-2" style="font-family: 'Josefin Sans'!important;"
                         >{{ nok.relationship }}
                       </span>
                     </v-col>
                     <v-col cols="12" class="col-md-6 py-1">
                       <small>Mobile Number</small><br />
-                      <span class="text-subtitle-2"
+                      <span class="text-subtitle-2" style="font-family: 'Josefin Sans'!important;"
                         >{{ nok.mobile_number }}
                       </span>
                     </v-col>
                     <v-col cols="12" class="col-md-6 py-1">
                       <small>ID/Passport Number</small><br />
-                      <span class="text-subtitle-2"
+                      <span class="text-subtitle-2" style="font-family: 'Josefin Sans'!important;"
                         >{{ nok.id_passport }}
                       </span>
                     </v-col>

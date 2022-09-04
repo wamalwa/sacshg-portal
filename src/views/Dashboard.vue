@@ -26,9 +26,9 @@
               </v-list-item-avatar>
               <v-list-item-content>
                 <v-list-item-title class="subtitle-2 mb-1"
-                  ><h2>{{ `5` }}</h2></v-list-item-title
+                  ><h2>{{ getCardValue("new members")["value"] }}</h2></v-list-item-title
                 >
-                <v-list-item-subtitle>Registration</v-list-item-subtitle>
+                <v-list-item-subtitle>New Members</v-list-item-subtitle>
               </v-list-item-content>
               <v-list-item-action>
                 <v-btn fab text>
@@ -45,9 +45,9 @@
             outlined
             hover
             dark
-            color="#F4515E"
+            color="#ff69b4"
             link
-            to="media"
+            to="loans"
           >
             <v-list-item two-line>
               <v-list-item-avatar tile left size="30">
@@ -55,9 +55,9 @@
               </v-list-item-avatar>
               <v-list-item-content>
                 <v-list-item-title class="subtitle-2 mb-1"
-                  ><h2>{{ `21` }}</h2></v-list-item-title
+                  ><h2>{{ getCardValue("new loans")["value"] }}</h2></v-list-item-title
                 >
-                <v-list-item-subtitle>Uploads</v-list-item-subtitle>
+                <v-list-item-subtitle>New Loans</v-list-item-subtitle>
               </v-list-item-content>
               <v-list-item-action>
                 <v-btn fab text>
@@ -66,6 +66,95 @@
               </v-list-item-action>
             </v-list-item>
           </v-card>
+        </v-col>
+      </v-row>
+
+      <v-row class="mb-2">
+        <v-col cols="6">
+          <v-timeline
+              align-top
+              dense
+          >
+            <v-timeline-item
+                color="pink"
+                small
+            >
+              <v-row class="pt-1">
+                <v-col cols="3">
+                  <strong>5pm</strong>
+                </v-col>
+                <v-col>
+                  <strong>New Icon</strong>
+                  <div class="text-caption">
+                    Mobile App
+                  </div>
+                </v-col>
+              </v-row>
+            </v-timeline-item>
+
+            <v-timeline-item
+                color="teal lighten-3"
+                small
+            >
+              <v-row class="pt-1">
+                <v-col cols="3">
+                  <strong>3-4pm</strong>
+                </v-col>
+                <v-col>
+                  <strong>Design Stand Up</strong>
+                  <div class="text-caption mb-2">
+                    Hangouts
+                  </div>
+                  <v-avatar>
+                    <v-img
+                        src="https://avataaars.io/?avatarStyle=Circle&topType=LongHairFrida&accessoriesType=Kurt&hairColor=Red&facialHairType=BeardLight&facialHairColor=BrownDark&clotheType=GraphicShirt&clotheColor=Gray01&graphicType=Skull&eyeType=Wink&eyebrowType=RaisedExcitedNatural&mouthType=Disbelief&skinColor=Brown"
+                    ></v-img>
+                  </v-avatar>
+                  <v-avatar>
+                    <v-img
+                        src="https://avataaars.io/?avatarStyle=Circle&topType=ShortHairFrizzle&accessoriesType=Prescription02&hairColor=Black&facialHairType=MoustacheMagnum&facialHairColor=BrownDark&clotheType=BlazerSweater&clotheColor=Black&eyeType=Default&eyebrowType=FlatNatural&mouthType=Default&skinColor=Tanned"
+                    ></v-img>
+                  </v-avatar>
+                  <v-avatar>
+                    <v-img
+                        src="https://avataaars.io/?avatarStyle=Circle&topType=LongHairMiaWallace&accessoriesType=Sunglasses&hairColor=BlondeGolden&facialHairType=Blank&clotheType=BlazerSweater&eyeType=Surprised&eyebrowType=RaisedExcited&mouthType=Smile&skinColor=Pale"
+                    ></v-img>
+                  </v-avatar>
+                </v-col>
+              </v-row>
+            </v-timeline-item>
+
+            <v-timeline-item
+                color="pink"
+                small
+            >
+              <v-row class="pt-1">
+                <v-col cols="3">
+                  <strong>12pm</strong>
+                </v-col>
+                <v-col>
+                  <strong>Lunch break</strong>
+                </v-col>
+              </v-row>
+            </v-timeline-item>
+
+            <v-timeline-item
+                color="teal lighten-3"
+                small
+            >
+              <v-row class="pt-1">
+                <v-col cols="3">
+                  <strong>9-11am</strong>
+                </v-col>
+                <v-col>
+                  <strong>Finish Home Screen</strong>
+                  <div class="text-caption">
+                    Web App
+                  </div>
+                </v-col>
+              </v-row>
+            </v-timeline-item>
+          </v-timeline>
         </v-col>
       </v-row>
 
@@ -187,6 +276,7 @@
 
 <script>
 import Navbar from "@/components/Navbar";
+import {mapGetters} from "vuex";
 
 export default {
   name: "Dashboard",
@@ -198,6 +288,7 @@ export default {
     authUser: {
       name: "",
     },
+    loading: false,
     actionColor: "black",
     actionMessage: "",
     snackbar: false,
@@ -225,7 +316,27 @@ export default {
         "This is an annual event that brings together all members to decide on key operations of the association.",
       main_image_url: "https://api.staugustineshg.org/api/v2/files/full_logo.png",
     },
+    timelines: [
+      {
+        color: "red lighten-2",
+        icon: "mdi-star",
+      },
+      {
+        color: "purple darken-1",
+        icon: "mdi-book-variant",
+      },
+      {
+        color: "green lighten-1",
+        icon: "mdi-airballoon",
+      },
+    ],
   }),
+
+  computed: {
+    ...mapGetters({
+      dashboard: "landing/DASHBOARD",
+    }),
+  },
 
   methods: {
     amOrPm(tm) {
@@ -244,6 +355,11 @@ export default {
         v = n % 100;
       return String(n).padStart(2, "0") + (s[(v - 20) % 10] || s[v] || s[0]);
     },
+    getCardValue(id) {
+      return this.dashboard.find((item) => {
+        return item.identifier === id;
+      })
+    }
   },
 
   mounted() {
@@ -252,6 +368,9 @@ export default {
       .then(() => {
         if (JSON.parse(localStorage.getItem("user"))) {
           this.authUser = JSON.parse(localStorage.getItem("user"));
+          this.$store.dispatch("landing/GET_DASHBOARD").then(() => {
+            this.loading = false;
+          });
         } else {
           this.$router.replace({
             name: "login",

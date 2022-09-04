@@ -9,6 +9,8 @@ import axios from 'axios'
 
 import CKEditor from '@ckeditor/ckeditor5-vue2';
 
+import moment from 'moment'
+
 Vue.use(fullscreen)
 Vue.use(CKEditor)
 
@@ -17,6 +19,18 @@ require('@/store/subscriber')
 Vue.config.productionTip = false
 
 axios.defaults.baseURL = 'https://api.staugustineshg.org/api/v2/'
+
+Vue.filter('formatDate', function(value) {
+  if (value) {
+    return moment(String(value)).format('DD/MM/YYYY')
+  }
+});
+
+Vue.filter('formatDateTime', function(value) {
+  if (value) {
+    return moment(String(value)).format('DD/MM/YYYY HH:mm:ss')
+  }
+});
 
 let isRefreshing = false;
 let subscribers = [];
