@@ -8,8 +8,23 @@ export default {
         products: [],
         services: [],
         testimonials: [],
+        officials: [],
         dashboard: [],
-        website: { id: 0, name: "", web_address: "", mission: "", vision: "", about: "", svc_photo_url: "", address: "", phone: "", email: "" }
+        website: {
+            id: 0,
+            name: "",
+            web_address: "",
+            mission: "",
+            vision: "",
+            about: "",
+            svc_photo_url: "",
+            address: "",
+            phone: "",
+            email: "",
+            members: 0,
+            awards: 0,
+            capital: 0,
+            loans: 0 }
     },
 
     getters: {
@@ -33,6 +48,11 @@ export default {
         },
         TESTIMONIALS: state => {
             return state.testimonials;
+        },
+        OFFICIALS: state => {
+            return state.officials.map((item) => {
+                return {...item, avatar: item.avatar_url}
+            });
         }
     },
 
@@ -105,6 +125,18 @@ export default {
         },
         DELETE_TESTIMONIAL: (state, payload) => {
             state.testimonials.splice(payload.index, 1)
+        },
+        SET_OFFICIALS: (state, payload) => {
+            state.officials = payload
+        },
+        ADD_OFFICIAL: (state, payload) => {
+            state.officials.push(payload)
+        },
+        UPDATE_OFFICIAL: (state, payload) => {
+            Object.assign(state.officials[payload.index], { text: payload.data });
+        },
+        DELETE_OFFICIAL: (state, payload) => {
+            state.officials.splice(payload.index, 1)
         }
     },
 
@@ -236,6 +268,30 @@ export default {
                 axios.delete('landing/testimonials/' + payload.data.id).then(response => {
                     if (response.data.status === 1000) {
                         context.commit('DELETE_TESTIMONIAL', { index: payload.index, data: response.data })
+                    }
+                    resolve(response)
+                }).catch(error => {
+                    reject(error)
+                })
+            })
+        },
+        GET_OFFICIALS: async (context) => {
+            let { data } = await axios.get('landing/officials')
+            context.commit('SET_OFFICIALS', data)
+        },
+        SAVE_OFFICIAL: async (context, payload) => {
+            let { data } = await axios.post('landing/officials', payload)
+            context.commit('ADD_OFFICIAL', data)
+        },
+        EDIT_OFFICIAL: async (context, payload) => {
+            let { data } = await axios.put('landing/officials/' + payload.data.id, payload.data)
+            context.commit('UPDATE_OFFICIAL', { index: payload.index, data: data })
+        },
+        DELETE_OFFICIAL: async (context, payload) => {
+            return new Promise((resolve, reject) => {
+                axios.delete('landing/officials/' + payload.data.id).then(response => {
+                    if (response.data.status === 1000) {
+                        context.commit('DELETE_OFFICIAL', { index: payload.index, data: response.data })
                     }
                     resolve(response)
                 }).catch(error => {

@@ -474,6 +474,109 @@
           </v-card>
         </v-dialog>
 
+        <v-dialog
+            v-model="officialsDialog"
+            max-width="700px"
+            persistent
+            scrollable
+            transition="dialog-bottom-transition"
+        >
+          <v-card tile>
+            <v-toolbar
+                color="cyan"
+                dark
+                dense
+                flat
+                src="https://api.staugustineshg.org/api/v2/files/bg2.png"
+            >
+              <v-btn dark icon @click="officialsDialog = false">
+                <v-icon>mdi-close</v-icon>
+              </v-btn>
+              <v-toolbar-title>Add Official</v-toolbar-title>
+            </v-toolbar>
+            <v-card-text>
+              <v-container>
+                <v-row class="mt-4">
+                  <v-col cols="12" md="6">
+                    <v-text-field
+                        v-model="newofficial.name"
+                        dense
+                        label="Name of Official*"
+                        outlined
+                        required
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="3">
+                    <v-autocomplete
+                        v-model="newofficial.type"
+                        :items="officialTypes"
+                        item-text="name"
+                        item-value="id"
+                        required
+                        dense
+                        outlined
+                        hide-no-data
+                        label="Category*"
+                    ></v-autocomplete>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="3">
+                    <v-text-field
+                        v-model="newofficial.position"
+                        dense
+                        label="Position*"
+                        outlined
+                        required
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" md="9">
+                    <v-text-field
+                        v-model="newofficial.avatar"
+                        dense
+                        label="Avatar URL*"
+                        outlined
+                        required
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" md="3">
+                    <v-avatar>
+                      <v-img
+                          :src="
+                          newofficial.avatar != ''
+                            ? newofficial.avatar
+                            : 'https://api.staugustineshg.org/api/v2/files/placeholder.png'
+                        "
+                          class="grey lighten-4 ma-1 elevation-3 rounded"
+                      ></v-img>
+                    </v-avatar>
+                  </v-col>
+
+                </v-row>
+              </v-container>
+              <small>*indicates required field</small>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn
+                  color="error darken-1"
+                  text
+                  @click="officialsDialog = false"
+              >
+                Close
+              </v-btn>
+              <v-btn
+                  :disabled="disabled"
+                  :loading="saving"
+                  color="success darken-1"
+                  text
+                  @click="saveOfficial"
+              >
+                <v-icon left>mdi-content-save-edit-outline</v-icon>
+                Save
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+
         <v-skeleton-loader
             v-if="loading"
             :transition="transition"
@@ -508,6 +611,7 @@
                   <v-tab>Products</v-tab>
                   <v-tab>Testimonials</v-tab>
                   <v-tab>FAQ</v-tab>
+                  <v-tab>Organization Chart</v-tab>
                 </v-tabs>
               </template>
             </v-toolbar>
@@ -570,46 +674,42 @@
                     </h2>
 
                     <v-row class="mt-4">
-                      <draggable v-model="carousels" group="people" @end="drag=false" @start="drag=true">
-                        <!--                        <div v-for="element in myArray" :key="element.id">{{element.name}}</div>-->
-                        <!--                      -->
-                        <v-col
-                            cols="12"
-                            v-for="(carousel, index) in carousels"
-                            :key="carousel.id"
-                        >
-                          <v-card hover outlined>
-                            <v-card-text>
-                              <h3>{{ carousel.image_caption }}</h3>
-                              <i>{{ carousel.tag_line }}</i>
-                            </v-card-text>
-                            <v-card-actions>
-                              <v-btn
-                                  class="ml-2"
-                                  color="primary"
-                                  outlined
-                                  rounded
-                                  small
-                                  @click="editCarousel(index)"
-                              >
-                                <v-icon left>mdi-pencil</v-icon>
-                                Edit
-                              </v-btn>
-                              <v-btn
-                                  class="ml-2"
-                                  color="error"
-                                  outlined
-                                  rounded
-                                  small
-                                  @click="deleteCarousel(index)"
-                              >
-                                <v-icon left>mdi-delete-outline</v-icon>
-                                Delete
-                              </v-btn>
-                            </v-card-actions>
-                          </v-card>
-                        </v-col>
-                      </draggable>
+                      <v-col
+                          cols="4"
+                          v-for="(carousel, index) in carousels"
+                          :key="carousel.id"
+                      >
+                        <v-card hover outlined>
+                          <v-card-text>
+                            <h3>{{ carousel.image_caption }}</h3>
+                            <i>{{ carousel.tag_line }}</i>
+                          </v-card-text>
+                          <v-card-actions>
+                            <v-btn
+                                class="ml-2"
+                                color="primary"
+                                outlined
+                                rounded
+                                small
+                                @click="editCarousel(index)"
+                            >
+                              <v-icon left>mdi-pencil</v-icon>
+                              Edit
+                            </v-btn>
+                            <v-btn
+                                class="ml-2"
+                                color="error"
+                                outlined
+                                rounded
+                                small
+                                @click="deleteCarousel(index)"
+                            >
+                              <v-icon left>mdi-delete-outline</v-icon>
+                              Delete
+                            </v-btn>
+                          </v-card-actions>
+                        </v-card>
+                      </v-col>
                     </v-row>
                   </v-card-text>
                 </v-card>
@@ -698,6 +798,46 @@
                                       outlined
                                   ></v-textarea>
                                 </v-col>
+                                <v-col cols="12" md="3">
+                                  <v-text-field
+                                      v-model="editwebsite.members"
+                                      dense
+                                      label="Members*"
+                                      outlined
+                                      required
+                                      type="number"
+                                  ></v-text-field>
+                                </v-col>
+                                <v-col cols="12" md="3">
+                                  <v-text-field
+                                      v-model="editwebsite.awards"
+                                      dense
+                                      label="Awards*"
+                                      outlined
+                                      required
+                                      type="number"
+                                  ></v-text-field>
+                                </v-col>
+                                <v-col cols="12" md="3">
+                                  <v-text-field
+                                      v-model="editwebsite.capital"
+                                      dense
+                                      label="Share Capital*"
+                                      outlined
+                                      required
+                                      type="number"
+                                  ></v-text-field>
+                                </v-col>
+                                <v-col cols="12" md="3">
+                                  <v-text-field
+                                      v-model="editwebsite.loans"
+                                      dense
+                                      label="Loan Portifolio*"
+                                      outlined
+                                      required
+                                      type="number"
+                                  ></v-text-field>
+                                </v-col>
                                 <v-col cols="12" md="4">
                                   <v-text-field
                                       v-model="editwebsite.address"
@@ -768,6 +908,46 @@
                                   >
                                   <v-card-text
                                       v-html="website.vision"
+                                  ></v-card-text>
+                                </v-card>
+                              </v-col>
+                              <v-col cols="12" md="3">
+                                <v-card flat>
+                                  <v-card-title
+                                  ><h6>Our Members</h6></v-card-title
+                                  >
+                                  <v-card-text
+                                      v-html="website.members"
+                                  ></v-card-text>
+                                </v-card>
+                              </v-col>
+                              <v-col cols="12" md="3">
+                                <v-card flat>
+                                  <v-card-title
+                                  ><h6>Our Awards</h6></v-card-title
+                                  >
+                                  <v-card-text
+                                      v-html="website.awards"
+                                  ></v-card-text>
+                                </v-card>
+                              </v-col>
+                              <v-col cols="12" md="3">
+                                <v-card flat>
+                                  <v-card-title
+                                  ><h6>Share Capital</h6></v-card-title
+                                  >
+                                  <v-card-text
+                                      v-html="website.capital"
+                                  ></v-card-text>
+                                </v-card>
+                              </v-col>
+                              <v-col cols="12" md="3">
+                                <v-card flat>
+                                  <v-card-title
+                                  ><h6>Loans Portfolio</h6></v-card-title
+                                  >
+                                  <v-card-text
+                                      v-html="website.loans"
                                   ></v-card-text>
                                 </v-card>
                               </v-col>
@@ -1222,6 +1402,111 @@
                   </v-card-text>
                 </v-card>
               </v-tab-item>
+
+              <v-tab-item>
+                <v-card flat>
+                  <v-card-text>
+                    <v-dialog
+                        v-model="deleteOfficialDialog"
+                        max-width="400px"
+                        persistent
+                    >
+                      <v-card outlined>
+                        <v-card-text class="error--text my-5"
+                        >Delete
+                          <b>{{
+                              deleteOfficialIndex > -1
+                                  ? officials[deleteOfficialIndex].name
+                                  : ""
+                            }}</b
+                          >?<br/><small
+                          >This activity cannot be undone once you click
+                            'Delete' below.</small
+                          ></v-card-text
+                        >
+                        <v-card-actions>
+                          <v-spacer></v-spacer>
+                          <v-btn
+                              v-if="!deleting"
+                              color="success"
+                              small
+                              text
+                              @click="cancelDeleteOfficial"
+                          >
+                            <v-icon left>mdi-close</v-icon>
+                            Cancel
+                          </v-btn
+                          >
+                          <v-btn
+                              :loading="deleting"
+                              color="error ml-3"
+                              small
+                              text
+                              @click="confirmDeleteOfficial"
+                          >
+                            <v-icon left>mdi-delete</v-icon>
+                            Delete
+                          </v-btn
+                          >
+                        </v-card-actions>
+                      </v-card>
+                    </v-dialog>
+
+                    <h2 class="subheading text--gray">
+                      Officials
+                      <v-btn
+                          color="primary"
+                          outlined
+                          @click="officialsDialog = true"
+                      >
+                        <v-icon left>mdi-plus</v-icon>
+                        Add Official
+                      </v-btn>
+                    </h2>
+
+                    <v-row class="mt-3">
+                      <v-col
+                          v-for="(official, index) in officials"
+                          :key="official.id"
+                          md="12"
+                      >
+                        <v-card hover outlined>
+                          <v-card-text>
+                            <h3>{{ official.name }}</h3>
+                            <p>{{ official.position }}</p>
+                          </v-card-text>
+                          <v-card-actions>
+                            <v-btn
+                                class="ml-2"
+                                color="primary"
+                                outlined
+                                rounded
+                                small
+                                @click="editOfficial(index)"
+                            >
+                              <v-icon left>mdi-pencil</v-icon>
+                              Edit
+                            </v-btn>
+
+                            <v-btn
+                                class="ml-2"
+                                color="error"
+                                outlined
+                                rounded
+                                small
+                                @click="deleteOfficial(index)"
+                            >
+                              <v-icon left>mdi-delete-outline</v-icon>
+                              Delete
+                            </v-btn>
+                          </v-card-actions>
+                        </v-card>
+                      </v-col>
+                    </v-row>
+                  </v-card-text>
+                </v-card>
+              </v-tab-item>
+
             </v-tabs-items>
           </v-card>
         </v-container>
@@ -1240,14 +1525,12 @@ import Navbar from "@/components/Navbar";
 import {mapActions, mapGetters} from "vuex";
 // import Editor from "@tinymce/tinymce-vue";
 import {quillEditor} from "vue-quill-editor";
-import draggable from 'vuedraggable';
 
 export default {
   name: "Settings",
   components: {
     Navbar,
     quillEditor,
-    draggable,
     // 'editor': Editor
   },
 
@@ -1296,6 +1579,16 @@ export default {
         ],
       },
     },
+    officialTypes: [
+      {
+        id: 'management',
+        name: 'Board of Management'
+      },
+      {
+        id: 'staff',
+        name: 'Staff Member'
+      }
+    ],
     editorData: "",
     tab: 0,
     editing: false,
@@ -1497,6 +1790,7 @@ export default {
     productDialog: false,
     servicesDialog: false,
     testimonialsDialog: false,
+    officialsDialog: false,
     modal: false,
     modal2: false,
     deleteCarouselIndex: -1,
@@ -1505,6 +1799,8 @@ export default {
     deleteServiceDialog: false,
     deleteTestimonialIndex: -1,
     deleteTestimonialDialog: false,
+    deleteOfficialIndex: -1,
+    deleteOfficialDialog: false,
     deleteFaqIndex: -1,
     deleteFaqDialog: false,
     deleteProductIndex: -1,
@@ -1525,6 +1821,10 @@ export default {
       address: "",
       phone: "",
       email: "",
+      members: 0,
+      awards: 0,
+      capital: 0,
+      loans: 0
     },
     newcarousel: {
       id: null,
@@ -1561,6 +1861,13 @@ export default {
       designation: "",
       message: "",
     },
+    newofficial: {
+      id: null,
+      avatar: "",
+      name: "",
+      position: "",
+      type: "",
+    },
     authUser: {
       name: "",
     },
@@ -1574,6 +1881,7 @@ export default {
       website: "landing/WEBSITE",
       services: "landing/SERVICES",
       testimonials: "landing/TESTIMONIALS",
+      officials: "landing/OFFICIALS",
       authenticated: "user/AUTHENTICATED",
     }),
   },
@@ -1595,6 +1903,9 @@ export default {
       addTestimonial: "landing/SAVE_TESTIMONIAL",
       updateTestimonial: "landing/EDIT_TESTIMONIAL",
       deleteTestimonialV: "landing/DELETE_TESTIMONIAL",
+      addOfficial: "landing/SAVE_OFFICIAL",
+      updateOfficial: "landing/EDIT_OFFICIAL",
+      deleteOfficialV: "landing/DELETE_OFFICIAL",
       updateComponent: "landing/SAVE_COMPONENT",
     }),
     deleteCarousel(index) {
@@ -1620,6 +1931,14 @@ export default {
     cancelDeleteTestimonial() {
       this.deleteTestimonialIndex = -1;
       this.deleteTestimonialDialog = false;
+    },
+    deleteOfficial(index) {
+      this.deleteOfficialIndex = index;
+      this.deleteOfficialDialog = true;
+    },
+    cancelDeleteOfficial() {
+      this.deleteOfficialIndex = -1;
+      this.deleteOfficialDialog = false;
     },
     deleteFaq(index) {
       this.deleteFaqIndex = index;
@@ -1748,6 +2067,43 @@ export default {
             }, 4000);
           });
     },
+    confirmDeleteOfficial() {
+      this.deleting = true;
+
+      this.deleteOfficialV({
+        index: this.deleteOfficialIndex,
+        data: {id: this.officials[this.deleteOfficialIndex].id},
+      })
+          .then(() => {
+            this.actionMessage = "Official deleted successfully";
+            this.actionColor = "success";
+            this.snackbar = true;
+            this.deleteOfficialIndex = -1;
+            this.deleting = false;
+            this.deleteOfficialDialog = false;
+
+            setTimeout(() => {
+              this.actionMessage = "";
+              this.actionColor = "black";
+              this.snackbar = false;
+            }, 4000);
+          })
+          .catch((err) => {
+            console.log(err);
+            this.actionMessage = "An error occured when deleting.";
+            this.actionColor = "red";
+            this.snackbar = true;
+            this.deleteOfficialIndex = -1;
+            this.deleting = false;
+            this.deleteOfficialDialog = false;
+
+            setTimeout(() => {
+              this.actionMessage = "";
+              this.actionColor = "black";
+              this.snackbar = false;
+            }, 4000);
+          });
+    },
     confirmDeleteFaq() {
       this.deleting = true;
 
@@ -1837,6 +2193,11 @@ export default {
       this.newtestimonial = this.testimonials[index];
       this.testimonialsDialog = true;
     },
+    editOfficial(index) {
+      this.editOfficialIndex = index;
+      this.newofficial = this.officials[index];
+      this.officialsDialog = true;
+    },
     editFaq(index) {
       this.editFaqIndex = index;
       this.newfaq = this.faqs[index];
@@ -1851,6 +2212,7 @@ export default {
       this.editCarouselIndex = -1;
       this.editServiceIndex = -1;
       this.editTestimonialIndex = -1;
+      this.editOfficialIndex = -1;
       this.editFaqIndex = -1;
       this.editProductIndex = -1;
       this.newcarousel = {
@@ -1888,6 +2250,14 @@ export default {
         designation: "",
         message: "",
       };
+      this.newofficial = {
+        id: null,
+        avatar: "",
+        name: "",
+        position: "",
+        type: "",
+      };
+
     },
     saveComponents() {
       this.saving = true;
@@ -1915,6 +2285,22 @@ export default {
 
       if (this.editwebsite.email !== this.website.email) {
         comps.push({key: "email", val: this.editwebsite.email});
+      }
+
+      if (this.editwebsite.members !== this.website.members) {
+        comps.push({key: "members", val: this.editwebsite.members});
+      }
+
+      if (this.editwebsite.awards !== this.website.awards) {
+        comps.push({key: "awards", val: this.editwebsite.awards});
+      }
+
+      if (this.editwebsite.capital !== this.website.capital) {
+        comps.push({key: "capital", val: this.editwebsite.capital});
+      }
+
+      if (this.editwebsite.loans !== this.website.loans) {
+        comps.push({key: "loans", val: this.editwebsite.loans});
       }
 
       if (comps.length === 0) {
@@ -1991,6 +2377,10 @@ export default {
         address: this.website.address,
         phone: this.website.phone,
         email: this.website.email,
+        members: this.website.members,
+        awards: this.website.awards,
+        capital: this.website.capital,
+        loans: this.website.loans
       };
       this.editing = !this.editing;
     },
@@ -2464,6 +2854,100 @@ export default {
             });
       }
     },
+    saveOfficial() {
+      this.saving = true;
+
+      if (this.editOfficialIndex > -1) {
+        this.updateOfficial({
+          index: this.editOfficialIndex,
+          data: this.newofficial,
+        })
+            .then(() => {
+              this.actionMessage = "Official updated successfully!";
+              this.actionColor = "success";
+              this.snackbar = true;
+              this.newofficial = {
+                id: null,
+                avatar: "",
+                name: "",
+                position: "",
+                type: "",
+              };
+              this.saving = false;
+              this.officialsDialog = false;
+
+              setTimeout(() => {
+                this.actionMessage = "";
+                this.actionColor = "black";
+                this.snackbar = false;
+              }, 4000);
+            })
+            .catch((err) => {
+              console.log(err);
+              this.actionMessage = "An error occured when adding official";
+              this.actionColor = "red";
+              this.snackbar = true;
+              this.newofficial = {
+                id: null,
+                avatar: "",
+                name: "",
+                position: "",
+                type: "",
+              };
+              this.saving = false;
+              this.officialsDialog = false;
+
+              setTimeout(() => {
+                this.actionMessage = "";
+                this.actionColor = "black";
+                this.snackbar = false;
+              }, 4000);
+            });
+      } else {
+        this.addOfficial(this.newofficial)
+            .then(() => {
+              this.actionMessage = "Official Added successfully!";
+              this.actionColor = "success";
+              this.snackbar = true;
+              this.newofficial = {
+                id: null,
+                avatar: "",
+                name: "",
+                position: "",
+                type: "",
+              };
+              this.saving = false;
+              this.officialsDialog = false;
+
+              setTimeout(() => {
+                this.actionMessage = "";
+                this.actionColor = "black";
+                this.snackbar = false;
+              }, 4000);
+            })
+            .catch((err) => {
+              console.log(err);
+              this.actionMessage = "An error occured when adding official";
+              this.actionColor = "red";
+              this.snackbar = true;
+              this.newofficial = {
+                id: null,
+                avatar: "",
+                name: "",
+                position: "",
+                type: "",
+              };
+              this.saving = false;
+              this.officialsDialog = false;
+
+              setTimeout(() => {
+                this.actionMessage = "";
+                this.actionColor = "black";
+                this.snackbar = false;
+              }, 4000);
+            });
+      }
+    },
     amOrPm(tm) {
       var hr = tm.split(":")[0];
       var min = tm.split(":")[1];
@@ -2499,6 +2983,8 @@ export default {
           this.$store.dispatch("landing/GET_SERVICES");
 
           this.$store.dispatch("landing/GET_TESTIMONIALS");
+
+          this.$store.dispatch("landing/GET_OFFICIALS");
 
           if (JSON.parse(localStorage.getItem("user"))) {
             this.authUser = JSON.parse(localStorage.getItem("user"));
